@@ -77,6 +77,7 @@ def step_connect_all(context):
         for j in range(i+1, listLength):
             switch2 = str(listOfSwitches[j])
             context.testTopo.addLink(switch1, switch2)
+            #context.mini.addLink(switch1,switch2)
 
 @when('we connect switch {sw1} to switch {sw2}')
 def step_connect(context, sw1, sw2):
@@ -85,7 +86,11 @@ def step_connect(context, sw1, sw2):
         assert switch is not None
         assert_that(switch in context.testTopo.switches(), equal_to(True), "Host %s exists" % switch)
     #connect the switches
+    #context.testTopo.addLink(sw1, sw2)
+    #s1 = context.mini.__getitem__(sw1)
+    #s2 = context.mini.__getitem__(sw2)
     context.testTopo.addLink(sw1, sw2)
+    #context.mini.addLink(s1, s2)
 
 @when('we connect host {host} to switch {switch}')
 def step_connectHosts(context, host, switch):
@@ -96,16 +101,19 @@ def step_connectHosts(context, host, switch):
     #connect host to switch
     context.testTopo.addLink(str(host), str(switch))
 
-@when('the link between {node1} and {node2} is going down')
-def step_linkDown(context, node1, node2):
-    for node in [node1, node2]:
-        assert node is not None
-        assert_that((node in context.testTopo.hosts()) or (node in context.testTopo.switches()),equal_to(True), 'node %s exists' %node)
-    listOfLinks = context.testTopo.links()
-    linkToDelete = (node1, node2)
-    assert_that(linkToDelete in context.testTopo.links(), equal_to(True))
-    listOfLinks.remove(linkToDelete)
-    context.testTopo.links = listOfLinks
+# @when('the link between {node1} and {node2} is going down')
+# def step_linkDown(context, node1, node2):
+#     for node in [node1, node2]:
+#         assert node is not None
+#         assert_that((node in context.testTopo.hosts()) or (node in context.testTopo.switches()),equal_to(True), 'node %s exists' %node)
+#     #TODO
+
+    #listOfLinks = context.testTopo.links()
+    #linkToDelete = Link(node1, node2)
+    #linkToDelete = (node1, node2)
+    #assert_that(linkToDelete in context.testTopo.links(), equal_to(True))
+    #listOfLinks.remove(linkToDelete)
+    #context.testTopo.links = listOfLinks
     #context.mini.configLinkStatus(node1, node2, "down")
 
 #######################################################
@@ -139,12 +147,13 @@ def step_test_ping(context, hst1, hst2):
     context.mini.build()
     context.mini.start()
     context.mini.waitConnected()
+    context.mini.waitConnected()
 
     timeout = "5"
     packetLoss = context.mini.ping((context.mini.getNodeByName(hst1), context.mini.getNodeByName(hst2)), timeout)
     assert_that(packetLoss, close_to(0,5))
 
-    #check if hosts are existend
+    #check if hosts are existing
     # if(context.hstA in context.testTopo.hosts() and context.hstB in context.testTopo.hosts()):
     #     #test ping
     #     timeout = "1"

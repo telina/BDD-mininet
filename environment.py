@@ -23,10 +23,13 @@ def after_scenario(context,scenario):
     print(context.mini.controllers)
     print("List of Switches: ")
     print(context.testTopo.switches(sort=True))
+    print(context.mini.switches)
     print("List of Hosts: ")
     print(context.testTopo.hosts(sort=True))
     print("List of Links: ")
     print(context.testTopo.links(sort=True))
+    #print(context.mini.topo.links(sort=True))
+    #print(context.mini.links)
 
     Cleanup.cleanup()
 
