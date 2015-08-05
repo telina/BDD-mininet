@@ -2,7 +2,7 @@
 __author__ = 'Bene'
 
 from behave   import *
-from hamcrest import assert_that, equal_to, less_than, close_to
+from hamcrest import assert_that, equal_to, less_than, close_to, contains_string
 from mininet.net import *
 from mininet.topo import *
 from mininet.node import RemoteController
@@ -14,7 +14,7 @@ from helper import NamedNumber
 @given('a single switch {sw1}')
 def step_impl(context, sw1):
     assert sw1 is not None
-    #add switches to topology with addSwitch(name)
+    #add switches to topology
     context.testTopo.addSwitch(sw1)
 
 @given('switch {sw1} and switch {sw2}')
@@ -22,7 +22,7 @@ def step_impl(context, sw1, sw2):
     #context.testTopo = Topo()
     assert sw1 is not None
     assert sw2 is not None
-    #add switches to topology with addSwitch(name)
+    #add switches to topology
     context.testTopo.addSwitch(sw1)
     context.testTopo.addSwitch(sw2)
 
@@ -31,7 +31,7 @@ def step_impl(context, sw1, sw2, sw3):
     assert sw1 is not None
     assert sw2 is not None
     assert sw3 is not None
-    #add switches to topology with addSwitch(name)
+    #add switches to topology
     for switch in [sw1,sw2,sw3]:
         context.testTopo.addSwitch(switch)
 
@@ -101,6 +101,17 @@ def step_connectHosts(context, host, switch):
     #connect host to switch
     context.testTopo.addLink(str(host), str(switch))
 
+
+@when('we start a webserver on host {host}')
+def step_startWebserver(context, host):
+    assert host is not None
+    assert_that(host in context.testTopo.hosts(), equal_to(True), "Host %s exists" % host)
+    context.mini.build()
+    context.mini.start()
+    #context.mini.waitConnected()
+    cmdString = "python -m SimpleHTTPServer 80 >& /tmp/http.log &"
+    context.mini.getNodeByName(host).cmd(cmdString)
+
 # @when('the link between {node1} and {node2} is going down')
 # def step_linkDown(context, node1, node2):
 #     for node in [node1, node2]:
@@ -153,20 +164,17 @@ def step_test_ping(context, hst1, hst2):
     packetLoss = context.mini.ping((context.mini.getNodeByName(hst1), context.mini.getNodeByName(hst2)), timeout)
     assert_that(packetLoss, close_to(0,5))
 
-    #check if hosts are existing
-    # if(context.hstA in context.testTopo.hosts() and context.hstB in context.testTopo.hosts()):
-    #     #test ping
-    #     timeout = "1"
-    #     packetLoss = context.mini.ping((context.mini.getNodeByName(hstA), context.mini.getNodeByName(hstB)), timeout)
-    #     print(packetLoss)
-    #     assert_that(0, equal_to(packetLoss))
-
-
-
-
-    #Garbage
-    #if context.switch1.name == swX and context.switch2.name == swY:
-     #   assert_that(True, equal_to(context.switch1.testLink(swY)))
-
-    #if context.switch1 == switch.returnSwitch(sX) and context.switch2 == switch.returnSwitch(sY):
-     #   assert_that(True, equal_to(context.switch1.testLink(sY)))
+@then('host {host1} is able to send a HTTP request to host {host2}')
+def step_httpRequest(context, host1, host2):
+    for host in [host1, host2]:
+        assert host is not None
+        assert_that(host in context.testTopo.hosts(), equal_to(True), "Host %s exists" % host)
+    h1 = context.mini.getNodeByName(host1)
+    h2 = context.mini.getNodeByName(host2)
+    cmdString = "wget -O - %s" % h2.IP()
+    responseArray = h1.pexec(cmdString)
+    response = responseArray[2]
+    assert_that(context.response, equal_to(0),"ExitCode is %s " % response)
+    #solution with http request pattern matching
+    #context.response = h1.cmd(cmdString)
+    #assert_that(context.response, contains_string("HTTP request sent, awaiting response... 200 OK"), "%s" % context.response)
