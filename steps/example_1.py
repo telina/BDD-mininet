@@ -144,22 +144,6 @@ def step_test_connection(context, sw1, sw2):
     connectionList = s1.connectionsTo(s2)
     assert_that(len(connectionList), greater_than(0), "Link %s <-> %s found" % (sw1,sw2))
 
-    #assert_that(s1 in context.mini.switches and s2 in context.mini.switches, equal_to(True))
-    #linkToFind = (str(sw1) + "-", str(sw2) + "-")
-    # matcher1 = str(sw1) + "-"
-    # matcher2 = str(sw2) + "-"
-    # for link in context.mini.links:
-    #     linkString = str(link.__str__())
-    #     if(matcher1 in linkString and matcher2 in linkString):
-    #         assert_that(matcher1 in linkString and matcher2 in linkString, equal_to(True), "Link %s <-> %s found" % (sw1,sw2))
-    #
-    # #in case there is no link this will make the test fail
-    # for link in context.mini.links:
-    #     linkString = link.__str__()
-    #     assert_that(matcher1 in linkString and matcher2 in linkString, equal_to(True), "Link %s <-> %s found" % (sw1,sw2))
-    # linkToFind = (sw1, sw2)
-    # assert_that(linkToFind in context.testTopo.links(), equal_to(True), "Link %s exists" % str(linkToFind))
-
 @then('switch {sw1} and switch {sw2} will not share a link')
 def step_test_connection(context, sw1, sw2):
     for switch in [sw1, sw2]:
@@ -172,22 +156,12 @@ def step_test_connection(context, sw1, sw2):
 
 @then('host {hst1} is able to ping host {hst2}')
 def step_test_ping(context, hst1, hst2):
-    context.mini.start()
+    #context.mini.start()
     for host in [hst1, hst2]:
         assert host is not None
         assert_that(context.mini.__contains__(host), equal_to(True),"host %s exists" % host)
-    #context.mininet.buildFromTopo(topo=context.testTopo)
-    #add new remote Controller to mininet object
-    #onosController = RemoteController('c1', ip='192.168.59.103', port=6633)
-    #context.mini.addController( onosController )
-    # context.mini.build()
-    # context.mini.start()
-    # context.mini.waitConnected()
-    # context.mini.waitConnected()
     h1 = context.mini.getNodeByName(hst1)
     h2 = context.mini.getNodeByName(hst2)
-    print(h1.IP())
-    print(h2.IP())
     timeout = "5"
     packetLoss = context.mini.ping((h1,h2), timeout)
     assert_that(packetLoss, close_to(0,5))
@@ -202,7 +176,7 @@ def step_httpRequest(context, host1, host2):
     cmdString = "wget -O - %s" % h2.IP()
     responseArray = h1.pexec(cmdString)
     response = responseArray[2]
-    assert_that(context.response, equal_to(0),"ExitCode is %s " % response)
+    assert_that(response, equal_to(0),"ExitCode is %s " % response)
     #solution with http request pattern matching
     #context.response = h1.cmd(cmdString)
     #assert_that(context.response, contains_string("HTTP request sent, awaiting response... 200 OK"), "%s" % context.response)

@@ -21,13 +21,14 @@ def before_scenario(context,scenario):
     context.mini = Mininet(topo=context.testTopo, controller=onosController, cleanup=True, ipBase='10.0.0.0/8', waitConnected=True)
     #context.mini.addController(name='c0', ip='192.168.59.103', port=6634)
 
-# def before_step(context, step):
-#     #start mininet when first "then" step is executed
-#     if(step.step_type == "then"):
-#         if not context.mininetStarted:
-#             context.mini.start()
-#             context.mininetStarted = True
-#     #logging.warning("before_step ///" + step.name + "\\\\, type ///" + step.step_type)
+def before_step(context, step):
+    #start mininet when first "then" step is executed
+    if(step.step_type == "then"):
+        if not context.mininetStarted:
+            context.mini.build()
+            context.mini.start()
+            context.mininetStarted = True
+    #logging.warning("before_step ///" + step.name + "\\\\, type ///" + step.step_type)
 
 def after_scenario(context,scenario):
     # print("ExitCode:")

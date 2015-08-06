@@ -28,12 +28,12 @@ Feature: set up a small topology
 #     Then switch s1 and switch s2 will share a link
 #      And switch s3 and switch s4 will not share a link
 #
-  Scenario: connection of a single switch and 2 hosts
-    Given a single switch s1
-      And a set of two hosts
-     When we connect host h1 to switch s1
-      And we connect host h2 to switch s1
-     Then host h1 is able to ping host h2
+#  Scenario: connection of a single switch and 2 hosts
+#    Given a single switch s1
+#      And a set of two hosts
+#     When we connect host h1 to switch s1
+#      And we connect host h2 to switch s1
+#     Then host h1 is able to ping host h2
 #
 #  Scenario: mesh net with 4 switches and 2 hosts
 #    Given a set of 4 switches
@@ -62,16 +62,15 @@ Feature: set up a small topology
 #      And we connect host h1 to switch s1
 #      And we connect host h2 to switch s4
 #     Then host h1 is able to ping host h2
-
-
-#  Scenario: connection of switches
-#    Given switch s1 and switch s2
-#      And a set of 2 hosts
-#     When we connect switch s1 to switch s2
-#      And we connect host h1 to switch s1
-#      And we connect host h2 to switch s2
-#      And we start a webserver on host h1
-#     Then host h2 is able to send a HTTP request to host h1
+#
+  Scenario: connection of switches
+    Given switch s1 and switch s2
+      And a set of 2 hosts
+     When we connect switch s1 to switch s2
+      And we connect host h1 to switch s1
+      And we connect host h2 to switch s2
+      And we start a webserver on host h1
+     Then host h2 is able to send a HTTP request to host h1
 
 
 
