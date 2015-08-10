@@ -45,6 +45,7 @@ def after_scenario(context,scenario):
     print("List of Links: ")
     # print(context.testTopo.links(sort=True))
     # print(context.mini.topo.links(sort=True))
-    print(context.mini.links)
+    for link in context.mini.links:
+        print(str(link) + " Status: " + str(link.status()))
 
     Cleanup.cleanup()

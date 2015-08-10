@@ -7,6 +7,7 @@ from mininet.net import *
 from mininet.topo import *
 from mininet.node import *
 from mininet.link import *
+from mininet.cli import *
 from helper import NamedNumber
 
 # This version of the code is working with Topo objects
@@ -117,19 +118,34 @@ def step_startWebserver(context, host):
     cmdString = "python -m SimpleHTTPServer 80 >& /tmp/http.log &"
     context.mini.getNodeByName(host).cmd(cmdString)
 
-# @when('the link between {node1} and {node2} is going down')
-# def step_linkDown(context, node1, node2):
-#     for node in [node1, node2]:
-#         assert node is not None
-#         assert_that((node in context.testTopo.hosts()) or (node in context.testTopo.switches()),equal_to(True), 'node %s exists' %node)
+@when('the link between {nd1} and {nd2} is going down')
+def step_linkDown(context, nd1, nd2):
+    for node in [nd1, nd2]:
+        assert node is not None
+        assert_that(context.mini.__contains__(node), equal_to(True),"node %s exists" % node)
+    node1 = context.mini.getNodeByName(nd1)
+    node2 = context.mini.getNodeByName(nd2)
+    #check if link between nodes is existing
+    connectionList = node1.connectionsTo(node2)
+    assert_that(len(connectionList), greater_than(0), "Link between %s and %s found" % (nd1,nd2))
+    #find the correct link and stop it => link status will be set to "MISSING"
+    for link in context.mini.links:
+        if((str(node1.name + "-") in str(link.intf1) and str(node2.name + "-") in str(link.intf2)) or
+               (str(node1.name + "-") in str(link.intf2) and str(node2.name + "-") in str(link.intf1))):
+            link.stop()
 
-    #listOfLinks = context.testTopo.links()
-    #linkToDelete = Link(node1, node2)
-    #linkToDelete = (node1, node2)
-    #assert_that(linkToDelete in context.testTopo.links(), equal_to(True))
-    #listOfLinks.remove(linkToDelete)
-    #context.testTopo.links = listOfLinks
-    #context.mini.configLinkStatus(node1, node2, "down")
+# @when('the link between {nd1} and {nd2} is going up')
+# def step_linkUp(context, nd1, nd2):
+#     for node in [nd1, nd2]:
+#         assert node is not None
+#         assert_that(context.mini.__contains__(node), equal_to(True), "node %s exists" % node)
+#     node1 = context.mini.getNodeByName(nd1)
+#     node2 = context.mini.getNodeByName(nd2)
+#     for link in context.mini.links:
+#         if((str(node1.name + "-") in str(link.intf1) and str(node2.name + "-") in str(link.intf2)) or
+#                (str(node1.name + "-") in str(link.intf2) and str(node2.name + "-") in str(link.intf1))):
+#             link.makeIntfPair(nd1, nd2)
+
 
 #######################################################
 #                   THEN Part
@@ -151,8 +167,22 @@ def step_test_connection(context, sw1, sw2):
         assert_that(context.mini.__contains__(switch), equal_to(True),"Switch %s exists" % switch)
     s1 = context.mini.getNodeByName(sw1)
     s2 = context.mini.getNodeByName(sw2)
+
     connectionList = s1.connectionsTo(s2)
-    assert_that(len(connectionList), equal_to(0), "Link %s <-> %s found" % (sw1,sw2))
+    # at least one link is existing -> check all links
+    if(len(context.mini.links) > 0):
+        for link in context.mini.links:
+            #check if link between nodes is existing, if so check status
+            if(str(sw1 + "-") in link.__str__() and str(sw2 + "-") in link.__str__()):
+                #link is existing and status must be (MISSING MISSING)
+                print(link)
+                assert_that(link.status(), equal_to("(MISSING MISSING)"), "Link %s <-> %s found with status %s" % (sw1,sw2,link.status()))
+            else:
+                #link between nodes is not existing
+                assert_that(str(sw1 + "-") in link.__str__() and str(sw2 + "-") in link.__str__(), equal_to(False))
+    else:
+        #no links at all
+        assert_that(len(connectionList), equal_to(0))
 
 @then('host {hst1} is able to ping host {hst2}')
 def step_test_ping(context, hst1, hst2):
@@ -164,7 +194,19 @@ def step_test_ping(context, hst1, hst2):
     h2 = context.mini.getNodeByName(hst2)
     timeout = "5"
     packetLoss = context.mini.ping((h1,h2), timeout)
-    assert_that(packetLoss, close_to(0,5))
+    assert_that(packetLoss, close_to(0,5),"Packet loss in percent is %s " % packetLoss)
+
+@then('host {hst1} is not able to ping host {hst2}')
+def step_test_ping(context, hst1, hst2):
+    #context.mini.start()
+    for host in [hst1, hst2]:
+        assert host is not None
+        assert_that(context.mini.__contains__(host), equal_to(True),"host %s exists" % host)
+    h1 = context.mini.getNodeByName(hst1)
+    h2 = context.mini.getNodeByName(hst2)
+    timeout = "5"
+    packetLoss = context.mini.ping((h1,h2), timeout)
+    assert_that(packetLoss, equal_to(100), "Packet loss in percent is %s " % packetLoss)
 
 @then('host {host1} is able to send a HTTP request to host {host2}')
 def step_httpRequest(context, host1, host2):
