@@ -18,7 +18,7 @@ def before_scenario(context,scenario):
     #create mininet instance with testTopo
     #context.mini = Mininet(topo=context.testTopo, controller=OVSController, cleanup=True)
     onosController= RemoteController('c0', ip='192.168.59.103', port=6633)
-    context.mini = Mininet(topo=context.testTopo, controller=onosController, cleanup=True, ipBase='10.0.0.0/8', waitConnected=True)
+    context.mini = Mininet(topo=context.testTopo, controller=onosController, cleanup=True, ipBase='10.0.0.0/8', autoSetMacs=True, waitConnected=True)
     #context.mini.addController(name='c0', ip='192.168.59.103', port=6634)
 
 def before_step(context, step):
@@ -33,19 +33,19 @@ def before_step(context, step):
 def after_scenario(context,scenario):
     # print("ExitCode:")
     # print(context.response)
-    print("Output for debugging purposes:")
-    print("List of Controllers: ")
-    print(context.mini.controllers)
-    print("List of Switches: ")
-    # print(context.testTopo.switches(sort=True))
-    print(context.mini.switches)
-    print("List of Hosts: ")
-    # print(context.testTopo.hosts(sort=True))
-    print(context.mini.hosts)
-    print("List of Links: ")
-    # print(context.testTopo.links(sort=True))
-    # print(context.mini.topo.links(sort=True))
-    for link in context.mini.links:
-        print(str(link) + " Status: " + str(link.status()))
+    # print("Output for debugging purposes:")
+    # print("List of Controllers: ")
+    # print(context.mini.controllers)
+    # print("List of Switches: ")
+    # # print(context.testTopo.switches(sort=True))
+    # print(context.mini.switches)
+    # print("List of Hosts: ")
+    # # print(context.testTopo.hosts(sort=True))
+    # print(context.mini.hosts)
+    # print("List of Links: ")
+    # # print(context.testTopo.links(sort=True))
+    # # print(context.mini.topo.links(sort=True))
+    # for link in context.mini.links:
+    #     print(str(link) + " Status: " + str(link.status()))
 
     Cleanup.cleanup()

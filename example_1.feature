@@ -87,13 +87,26 @@ Feature: set up a small topology
 #      And we connect host h2 to switch s2
 #      And the link between s1 and s2 is going down
 #     Then host h1 is not able to ping host h2
+#
+#  Scenario: mesh net, with link going down
+#    Given a set of 4 switches
+#      And a set of two hosts
+#     When we connect all switches with each other
+#      And we connect host h1 to switch s1
+#      And we connect host h2 to switch s4
+#      And the link between s1 and s4 is going down
+#     Then host h1 is able to ping host h2
 
-  Scenario: mesh net, with link going down
-    Given a set of 4 switches
-      And a set of two hosts
-     When we connect all switches with each other
+  Scenario: simple net with route identification
+    Given a set of 5 switches
+      And a set of 2 hosts
+     When we connect switch s1 to switch s2
+      And we connect switch s1 to switch s4
+      And we connect switch s2 to switch s3
+      And we connect switch s3 to switch s5
+      And we connect switch s4 to switch s5
       And we connect host h1 to switch s1
-      And we connect host h2 to switch s4
-      And the link between s1 and s4 is going down
-     Then host h1 is able to ping host h2
-
+      And we connect host h2 to switch s5
+ #    Then host h1 is able to ping host h2
+     Then the ping traffic from host h1 to host h2 takes the route across switch s4
+ #     And switch s4 is next hop from switch s1 for ping

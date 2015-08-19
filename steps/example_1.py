@@ -9,6 +9,7 @@ from mininet.node import *
 from mininet.link import *
 from mininet.cli import *
 from helper import NamedNumber
+from FlowEntrys import FlowTable
 
 # This version of the code is working with Topo objects
 
@@ -222,3 +223,49 @@ def step_httpRequest(context, host1, host2):
     #solution with http request pattern matching
     #context.response = h1.cmd(cmdString)
     #assert_that(context.response, contains_string("HTTP request sent, awaiting response... 200 OK"), "%s" % context.response)
+
+# @then('switch {switch1} is next hop of switch {switch2} for ping')
+# def step_routeIdentification(context, switch1, switch2):
+#     for switch in [switch1, switch2]:
+#         assert switch is not None
+#         assert_that(context.mini.__contains__(switch), equal_to(True),"switch %s exists" % switch)
+#     s1 = context.mini.getNodeByName(switch2)
+
+@then('the ping traffic from host {host1} to host {host2} takes the route across switch {switch1}')
+def step_routeIdentification(context, switch1, host1, host2):
+    for node in [switch1, host1, host2]:
+        assert node is not None
+        assert_that(context.mini.__contains__(node), equal_to(True),"node %s exists" % node)
+    s1 = context.mini.getNodeByName(switch1)
+    h1 = context.mini.getNodeByName(host1)
+    h2 = context.mini.getNodeByName(host2)
+    context.mini.ping((h1,h2), 5)
+    response = s1.dpctl("dump-flows")
+    #create Flowtable for switch
+    s1FlowTable = FlowTable(switch1, response)
+    #check if switch has forwarding entry for MAC of host1
+    hasEntry = s1FlowTable.hasForwardingEntry(h2.MAC())
+    assert_that(hasEntry, equal_to(True), "switch %s has dl_dst entry for traffic")
+
+    #flowEntrySrcDst = "dl_src=%s,dl_dst=%s" %(h1.MAC(), h2.MAC())
+    #assert_that(response, equal_to("TEST"), "Response: %s" % response)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
