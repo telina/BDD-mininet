@@ -19,3 +19,5 @@ class NamedNumber(object):
     def from_string(cls, named_number):
         name = named_number.strip().lower()
         return cls.MAP[name]
+
+

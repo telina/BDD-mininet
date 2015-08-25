@@ -11,6 +11,7 @@ from mininet.cli import *
 from helper import NamedNumber
 from FlowEntrys import FlowTable
 
+
 # This version of the code is working with Topo objects
 
 @given('a single switch {sw1}')
@@ -135,6 +136,44 @@ def step_linkDown(context, nd1, nd2):
                (str(node1.name + "-") in str(link.intf2) and str(node2.name + "-") in str(link.intf1))):
             link.stop()
 
+
+@when('we assign host {host} on switch {switch} to VLAN {vlan}')
+def step_assignVlan(context, host, switch, vlan):
+    assert host is not None
+    assert_that(context.mini.__contains__(host), equal_to(True), "host %s exists" % host)
+    assert_that(context.mini.__contains__("h2"), equal_to(True), "host %s exists" % host)
+    assert switch is not None
+    assert_that(context.mini.__contains__(switch), equal_to(True), "switch %s exists" % switch)
+    assert vlan is not None
+    assert_that(vlan.isdigit(),equal_to(True), "VLAN-Number is number")
+    vlanNumber = int(vlan)
+    switch1 = context.mini.getNodeByName(switch)
+    host1 = context.mini.getNodeByName(host)
+    if not context.mininetStarted:
+        context.mini.build()
+        context.mini.start()
+        context.mininetStarted = True
+    #print(response)
+    #print(switch1.connectionsTo(host1))
+    list = switch1.connectionsTo(host1)
+    for intf in list:
+        if(switch1.name in str(intf)):
+            for index in range(0, len(intf)):
+                if(str(switch1.name + "-") in str(intf[index])):
+                    port = intf[index]
+    command = "set port %s tag=%s vlan_mode=access" % (port, vlanNumber)
+    print(command)
+    switch1.dpctl(command)
+    response = switch1.dpctl("dump-flows")
+    print(response)
+    #TODO
+    #s1FlowTable = FlowTable(switch1, response)
+    #assert_that(response, equal_to("TEST"), "Response: %s" % response)
+
+    #set port s1-eth1 tag=20 vlan_mode=access
+
+
+
 # @when('the link between {nd1} and {nd2} is going up')
 # def step_linkUp(context, nd1, nd2):
 #     for node in [nd1, nd2]:
@@ -187,7 +226,6 @@ def step_test_connection(context, sw1, sw2):
 
 @then('host {hst1} is able to ping host {hst2}')
 def step_test_ping(context, hst1, hst2):
-    #context.mini.start()
     for host in [hst1, hst2]:
         assert host is not None
         assert_that(context.mini.__contains__(host), equal_to(True),"host %s exists" % host)
