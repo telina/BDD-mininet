@@ -153,24 +153,28 @@ def step_assignVlan(context, host, switch, vlan):
         context.mini.build()
         context.mini.start()
         context.mininetStarted = True
-    #print(response)
-    #print(switch1.connectionsTo(host1))
     list = switch1.connectionsTo(host1)
     for intf in list:
         if(switch1.name in str(intf)):
             for index in range(0, len(intf)):
                 if(str(switch1.name + "-") in str(intf[index])):
                     port = intf[index]
-    command = "set port %s tag=%s vlan_mode=access" % (port, vlanNumber)
-    print(command)
-    switch1.dpctl(command)
+    #set port s1-eth1 tag=20 vlan_mode=access
+    # command = "set port %s tag=%s vlan_mode=access" % (port, vlanNumber)
+    # print(command)
+    # bridge = "br%s" % vlanNumber
+    # switch1.vsctl("add-br %s" % bridge)
+    # switch1.vsctl("add-port %s eth2" % bridge)
+    # switch1.vsctl("add-br brFake%s %s %s" % (vlanNumber, bridge, vlanNumber))
+    # #switch1.vsctl("add-port br0 eth2 tag=666")
+    # print(switch1.vsctl("list-ports br0"))
+    #print(switch1.vsctl("show"))
+    #print(switch1.dpctl("add-flow in_port=4,actions=drop"))
+    #print(switch1.dpctl(""))
+    #switch1.dpctl(command)
     response = switch1.dpctl("dump-flows")
     print(response)
-    #TODO
-    #s1FlowTable = FlowTable(switch1, response)
-    #assert_that(response, equal_to("TEST"), "Response: %s" % response)
 
-    #set port s1-eth1 tag=20 vlan_mode=access
 
 
 
@@ -277,6 +281,7 @@ def step_routeIdentification(context, switch1, host1, host2):
     s1 = context.mini.getNodeByName(switch1)
     h1 = context.mini.getNodeByName(host1)
     h2 = context.mini.getNodeByName(host2)
+    #print(s1.dpctl("add-flow priority=40000,in_port=1,dl_dst=00:00:00:00:00:02,actions=drop"))
     context.mini.ping((h1,h2), 5)
     response = s1.dpctl("dump-flows")
     #create Flowtable for switch
@@ -284,8 +289,8 @@ def step_routeIdentification(context, switch1, host1, host2):
     #check if switch has forwarding entry for MAC of host1
     hasEntry = s1FlowTable.hasForwardingEntry(h2.MAC())
     assert_that(hasEntry, equal_to(True), "switch %s has dl_dst entry for traffic" % switch1)
-
-    #flowEntrySrcDst = "dl_src=%s,dl_dst=%s" %(h1.MAC(), h2.MAC())
+    #s1FlowTable.printTable()
+    flowEntrySrcDst = "dl_src=%s,dl_dst=%s" %(h1.MAC(), h2.MAC())
     #assert_that(response, equal_to("TEST"), "Response: %s" % response)
 
 @then('the http traffic from host {host1} to host {host2} takes the route across switch {switch1}')
@@ -299,13 +304,14 @@ def step_routeIdentification(context, switch1, host1, host2):
     #send http request
     cmdString = "wget -O - %s:8080" % h2.IP()
     h1.pexec(cmdString)
+    print(cmdString)
     response = s1.dpctl("dump-flows")
     #create Flowtable for switch
     s1FlowTable = FlowTable(switch1, response)
-    print(response)
-    #check if switch has forwarding entry for MAC of host1
+    #check if switch has forwarding entry for hosts MAC
     hasEntry = s1FlowTable.hasForwardingEntry(h2.MAC())
     assert_that(hasEntry, equal_to(True), "switch %s has dl_dst entry for traffic" % switch1)
+    #assert_that(response, equal_to("TEST"), "Response: %s" % response)
 
 
 

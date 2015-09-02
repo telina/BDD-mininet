@@ -132,8 +132,13 @@ class FlowTable(object):
             #check if entry has MAC as dest and action is output (rather than drop)
             if(entry.dl_dst == mac and "output" in entry.actions):
                 return True
-            else:
-                return False
+        return False
+
+    def printTable(self):
+        #check all entrys in table
+        for index in range(0, len(self.table)):
+            entry = self.table[index]
+            entry.printEntry()
 
     # def splitFirstLine(self):
     #     line = self.table[1]
@@ -215,7 +220,25 @@ class FlowEntry(object):
         self.icmp_code = icmp_code
         self.actions = actions
 
-    # def printEntry(self):
-    #     print(self.cookie)
-    #     print(self.actions)
-
+    def printEntry(self):
+         print("cookie="+str(self.cookie)),
+         print("duration="+str(self.duration)),
+         print("table="+str(self.table)),
+         print("n_packets="+str(self.n_packets)),
+         print("n_bytes="+str(self.n_bytes)),
+         print("idle_age="+str(self.idle_age)),
+         print("priority="+str(self.priority)),
+         print("in_port="+str(self.in_port)),
+         print("dl_vlan="+str(self.dl_vlan)),
+         print("dl_src="+str(self.dl_src)),
+         print("dl_dst="+str(self.dl_dst)),
+         print("dl_type="+str(self.dl_type)),
+         print("nw_src="+str(self.nw_src)),
+         print("nw_dst="+str(self.nw_dst)),
+         print("nw_prot="+str(self.nw_prot)),
+         print("nw_tos="+str(self.nw_tos)),
+         print("tp_src="+str(self.tp_src)),
+         print("tp_dst="+str(self.tp_dst)),
+         print("icmp_type="+str(self.icmp_type)),
+         print("icmp_code="+str(self.icmp_code)),
+         print("actions="+str(self.actions))

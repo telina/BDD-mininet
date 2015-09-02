@@ -39,6 +39,7 @@ def before_step(context, step):
     #logging.warning("before_step ///" + step.name + "\\\\, type ///" + step.step_type)
 
 def after_scenario(context,scenario):
+    print("After scenario code execution...")
     # print("ExitCode:")
     # print(context.response)
     # print("Output for debugging purposes:")
@@ -55,5 +56,4 @@ def after_scenario(context,scenario):
     # # print(context.mini.topo.links(sort=True))
     # for link in context.mini.links:
     #     print(str(link) + " Status: " + str(link.status()))
-
     Cleanup.cleanup()
