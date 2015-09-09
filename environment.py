@@ -8,38 +8,36 @@ from mininet.clean import *
 from mininet import net
 from functools import partial
 from mininet.clean import Cleanup
-from mininet.examples.vlanhost import *
+#from mininet.examples.vlanhost import *
 import logging
 
 #logging.basicConfig(filename='example.log',level=logging.DEBUG)
 
 def before_scenario(context,scenario):
+    #Cleanup.cleanup()
     context.mininetStarted = False
     #create testTopo
     context.testTopo = Topo()
     #create mininet instance with testTopo
     #context.mini = Mininet(topo=context.testTopo, controller=OVSController, cleanup=True)
-
-    ## VLAN TEST ###
-    #vlan = 888
-    #host = partial( VLANHost, vlan=vlan )
-
     onosController= RemoteController('c0', ip='192.168.59.103', port=6633)
     context.mini = Mininet(topo=context.testTopo, controller=onosController, cleanup=True, ipBase='10.0.0.0/8', autoSetMacs=True,
                            waitConnected=True)
+    #context.helper = mininetHelper(context.mini)
     #context.mini.addController(name='c0', ip='192.168.59.103', port=6634)
 
 def before_step(context, step):
     #start mininet when first "then" step is executed
     if(step.step_type == "then"):
-        if not context.mininetStarted:
-            context.mini.build()
-            context.mini.start()
-            context.mininetStarted = True
+    # if(step.step_type == "when"):
+         if not context.mininetStarted:
+             context.mini.build()
+             context.mini.start()
+             context.mininetStarted = True
     #logging.warning("before_step ///" + step.name + "\\\\, type ///" + step.step_type)
 
 def after_scenario(context,scenario):
-    print("After scenario code execution...")
+    # print("After scenario code execution...")
     # print("ExitCode:")
     # print(context.response)
     # print("Output for debugging purposes:")
@@ -55,5 +53,13 @@ def after_scenario(context,scenario):
     # # print(context.testTopo.links(sort=True))
     # # print(context.mini.topo.links(sort=True))
     # for link in context.mini.links:
-    #     print(str(link) + " Status: " + str(link.status()))
+    #      print(str(link) + " Status: " + str(link.status()))
+    #context.mininetStarted = False
     Cleanup.cleanup()
+
+
+def buildAndStart(context):
+    if not context.mininetStarted:
+        context.mini.build()
+        context.mini.start()
+        context.mininetStarted = True
