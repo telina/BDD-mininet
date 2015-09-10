@@ -1,5 +1,6 @@
 __author__ = 'Bene'
 
+from FlowEntrys import FlowTable
 from behave import *
 from hamcrest import *
 from mininet.topo import *
@@ -54,6 +55,13 @@ class MininetHelper(object):
             for j in range(i+1, listLength):
                 switch2 = str(listOfSwitches[j])
                 mininet.addLink(switch1, switch2)
+
+    @classmethod
+    def createFlowTable(cls, switch):
+        flows = switch.dpctl("dump-flows")
+        print(flows)
+        return FlowTable(switch, flows)
+
 
 
 

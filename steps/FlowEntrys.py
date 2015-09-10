@@ -125,14 +125,24 @@ class FlowTable(object):
             else:
                 return False
 
-    def hasForwardingEntry(self, mac):
+    # def hasForwardingEntry(self, mac):
+    #     #check all entrys in table
+    #     for index in range(0, len(self.table)):
+    #         entry = self.table[index]
+    #         #check if entry has MAC as dest and action is output (rather than drop)
+    #         if(entry.dl_dst == mac and "output" in entry.actions):
+    #             return True
+    #     return False
+
+    def hasForwardingEntry(self, srcMac, dstMac):
         #check all entrys in table
         for index in range(0, len(self.table)):
             entry = self.table[index]
             #check if entry has MAC as dest and action is output (rather than drop)
-            if(entry.dl_dst == mac and "output" in entry.actions):
+            if(entry.dl_src == srcMac and entry.dl_dst == dstMac and "output" in entry.actions):
                 return True
         return False
+
 
     def printTable(self):
         #check all entrys in table
