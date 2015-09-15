@@ -30,14 +30,14 @@ Feature: set up and test a small topology
 #      And switch s3 and switch s4 will not share a link
 
               #works
-  Scenario: connection of a single switch and 2 hosts
-    Given a set of 2 switches
-      And a set of two hosts
-      And we connect switch s1 to switch s2
-      And we connect host h1 to switch s1
-      And we connect host h2 to switch s2
-     When host h1 pings host h2
-     Then the ping succeeds
+#  Scenario: connection of a single switch and 2 hosts
+#    Given a set of 2 switches
+#      And a set of two hosts
+#      And we connect switch s1 to switch s2
+#      And we connect host h1 to switch s1
+#      And we connect host h2 to switch s2
+#     When host h1 pings host h2
+#     Then the ping succeeds
 ###
 #  Scenario: mesh net with 4 switches and 2 hosts
 #    Given a set of 4 switches
@@ -89,9 +89,8 @@ Feature: set up and test a small topology
 #      And we connect switch s1 to switch s2
 #      And we connect host h1 to switch s1
 #      And we connect host h2 to switch s2
-#     When we start a webserver on host h1
-#      And we send a HTTP request from host h2 to host h1
-##     Then host h2 is able to send a HTTP request to host h1
+#      And we start a webserver on host h1
+#     When we send a HTTP request from host h2 to host h1
 #     Then the request succeeds
 #
 #  Scenario: two connected switches, with link going down
@@ -121,38 +120,42 @@ Feature: set up and test a small topology
 #      And host h1 pings host h2
 #     Then the ping succeeds
 
-##  Scenario: net with static vlans
-##    Given a set of 1 switches
-##      And a set of 2 hosts
-##     #When we connect switch s1 to switch s2
-##      And we connect host h1 to switch s1
-##      And we connect host h2 to switch s1
-##      #And we connect host h3 to switch s2
-##      And we assign host h1 on switch s1 to VLAN 11
-##      #And we assign host h2 on switch s2 to VLAN 12
-##      #And we assign host h3 on switch s2 to VLAN 20
-##     Then host h1 is not able to ping host h2
-##      #And host h1 is not able to ping host h3
+#  Scenario: simple net with route identification
+#    Given a set of 5 switches
+#      And a set of 2 hosts
+#      And we connect switch s1 to switch s2
+#      And we connect switch s1 to switch s4
+#      And we connect switch s2 to switch s3
+#      And we connect switch s3 to switch s5
+#      And we connect switch s4 to switch s5
+#      And we connect host h1 to switch s1
+#      And we connect host h2 to switch s5
+#     When host h1 pings host h2
+#     Then the ping traffic from host h1 to host h2 takes the route across switch s4
 
-  Scenario: simple net with route identification
-    Given a set of 5 switches
-      And a set of 2 hosts
-      And we connect switch s1 to switch s2
-      And we connect switch s1 to switch s4
-      And we connect switch s2 to switch s3
-      And we connect switch s3 to switch s5
-      And we connect switch s4 to switch s5
-      And we connect host h1 to switch s1
-      And we connect host h2 to switch s5
- #    Then host h1 is able to ping host h2
-     When host h1 pings host h2
-     Then the ping traffic from host h1 to host h2 takes the route across switch s3
- #     And switch s4 is next hop from switch s1 for ping
+  Scenario: simple net with 3 routes between hosts
+  Given a set of 10 switches
+    And a set of 2 hosts
+    And we connect switch s1 to switch s2
+    And we connect switch s1 to switch s5
+    And we connect switch s1 to switch s8
+    And we connect switch s2 to switch s3
+    And we connect switch s3 to switch s4
+    And we connect switch s5 to switch s6
+    And we connect switch s6 to switch s7
+    And we connect switch s4 to switch s9
+    And we connect switch s7 to switch s9
+    And we connect switch s8 to switch s9
+    And we connect switch s9 to switch s10
+    And we connect host h1 to switch s1
+    And we connect host h2 to switch s10
+   When host h1 pings host h2
+   Then the ping traffic from host h1 to host h2 takes the route across switch s8
 
 #  Scenario: simple net with route identification
 #    Given a set of 5 switches
 #      And a set of 2 hosts
-#     When we connect switch s1 to switch s2
+#      And we connect switch s1 to switch s2
 #      And we connect switch s1 to switch s4
 #      And we connect switch s2 to switch s3
 #      And we connect switch s3 to switch s5
@@ -160,4 +163,5 @@ Feature: set up and test a small topology
 #      And we connect host h1 to switch s1
 #      And we connect host h2 to switch s5
 #      And we start a webserver on host h2
-#     Then the http traffic from host h1 to host h2 takes the route across switch s2
+#     When we send a http request from host h1 to host h2
+#     Then the http traffic from host h1 to host h2 takes the route across switch s4

@@ -6,13 +6,6 @@ from hamcrest import *
 from mininet.topo import *
 from mininet.net import *
 from mininet.node import OVSController, RemoteController
-from mininet.link import *
-from mininet.clean import *
-from mininet import net
-from functools import partial
-from mininet.clean import Cleanup
-from mininet.examples.vlanhost import *
-import logging
 
 class MininetHelper(object):
 
@@ -59,7 +52,6 @@ class MininetHelper(object):
     @classmethod
     def createFlowTable(cls, switch):
         flows = switch.dpctl("dump-flows")
-        print(flows)
         return FlowTable(switch, flows)
 
 
