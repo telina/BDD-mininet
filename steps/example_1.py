@@ -70,18 +70,31 @@ def step_ping(context, hst1, hst2):
     context.pingResult = packetLoss
 
 
-@when('the link between {nd1} and {nd2} is going down')
-def step_linkDown(context, nd1, nd2):
-    node1 = MininetHelper.getNodeFromName(context.mini, nd1)
-    node2 = MininetHelper.getNodeFromName(context.mini, nd2)
-    #check if link between nodes is existing
-    connectionList = node1.connectionsTo(node2)
-    assert_that(len(connectionList), greater_than(0), "Link between %s and %s found" % (nd1,nd2))
-    #find the correct link and stop it => link status will be set to "MISSING"
-    for link in context.mini.links:
-        if((str(node1.name + "-") in str(link.intf1) and str(node2.name + "-") in str(link.intf2)) or
-               (str(node1.name + "-") in str(link.intf2) and str(node2.name + "-") in str(link.intf1))):
-            link.stop()
+#doesnt work with onos no flow new flows when link goes down!
+# @when('the link between {nd1} and {nd2} is going down')
+# def step_linkDown(context, nd1, nd2):
+#     #TODO delete
+#     try:
+#         input("Press enter to continue")
+#     except SyntaxError:
+#         pass
+#     #TODO end
+#     node1 = MininetHelper.getNodeFromName(context.mini, nd1)
+#     node2 = MininetHelper.getNodeFromName(context.mini, nd2)
+#     #check if link between nodes is existing
+#     connectionList = node1.connectionsTo(node2)
+#     assert_that(len(connectionList), greater_than(0), "Link between %s and %s found" % (nd1,nd2))
+#     #find the correct link and stop it => link status will be set to "MISSING"
+#     for link in context.mini.links:
+#         if((str(node1.name + "-") in str(link.intf1) and str(node2.name + "-") in str(link.intf2)) or
+#                (str(node1.name + "-") in str(link.intf2) and str(node2.name + "-") in str(link.intf1))):
+#             link.stop()
+#     #TODO delete
+#     try:
+#         input("Press enter to continue")
+#     except SyntaxError:
+#         pass
+#     #TODO end
 
 @when('we send a http request from host {hst1} to host {hst2}')
 def step_httpRequest(context, hst1, hst2):

@@ -109,16 +109,17 @@ Feature: set up and test a small topology
 #     When the link between s1 and s2 is going down
 #      And host h1 pings host h2
 #     Then the ping fails
-##
-#  Scenario: mesh net, with link going down
-#    Given a set of 4 switches
-#      And a set of two hosts
-#      And we connect all switches with each other
-#      And we connect host h1 to switch s1
-#      And we connect host h2 to switch s4
-#     When the link between s1 and s4 is going down
-#      And host h1 pings host h2
-#     Then the ping succeeds
+
+##doesnt work, see step implementation
+##  Scenario: mesh net, with link going down
+##    Given a set of 4 switches
+##      And a set of two hosts
+##      And we connect all switches with each other
+##      And we connect host h1 to switch s1
+##      And we connect host h2 to switch s4
+##     When the link between s1 and s4 is going down
+##      And host h1 pings host h2
+##     Then the ping succeeds
 
 #  Scenario: simple net with route identification
 #    Given a set of 5 switches
@@ -131,26 +132,26 @@ Feature: set up and test a small topology
 #      And we connect host h1 to switch s1
 #      And we connect host h2 to switch s5
 #     When host h1 pings host h2
-#     Then the ping traffic from host h1 to host h2 takes the route across switch s4
+#     Then the ping traffic from host h1 to host h2 takes the route across switch s2
 
-  Scenario: simple net with 3 routes between hosts
-  Given a set of 10 switches
-    And a set of 2 hosts
-    And we connect switch s1 to switch s2
-    And we connect switch s1 to switch s5
-    And we connect switch s1 to switch s8
-    And we connect switch s2 to switch s3
-    And we connect switch s3 to switch s4
-    And we connect switch s5 to switch s6
-    And we connect switch s6 to switch s7
-    And we connect switch s4 to switch s9
-    And we connect switch s7 to switch s9
-    And we connect switch s8 to switch s9
-    And we connect switch s9 to switch s10
-    And we connect host h1 to switch s1
-    And we connect host h2 to switch s10
-   When host h1 pings host h2
-   Then the ping traffic from host h1 to host h2 takes the route across switch s8
+#  Scenario: simple net with 3 routes between hosts
+#  Given a set of 10 switches
+#    And a set of 2 hosts
+#    And we connect switch s1 to switch s2
+#    And we connect switch s1 to switch s5
+#    And we connect switch s1 to switch s8
+#    And we connect switch s2 to switch s3
+#    And we connect switch s3 to switch s4
+#    And we connect switch s5 to switch s6
+#    And we connect switch s6 to switch s7
+#    And we connect switch s4 to switch s9
+#    And we connect switch s7 to switch s9
+#    And we connect switch s8 to switch s9
+#    And we connect switch s9 to switch s10
+#    And we connect host h1 to switch s1
+#    And we connect host h2 to switch s10
+#   When host h1 pings host h2
+#   Then the ping traffic from host h1 to host h2 takes the route across switch s8
 
 #  Scenario: simple net with route identification
 #    Given a set of 5 switches

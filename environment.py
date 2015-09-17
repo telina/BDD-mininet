@@ -19,9 +19,10 @@ def before_scenario(context,scenario):
     #create testTopo
     context.testTopo = Topo()
     #create remoteController
-    onosController= RemoteController('c0', ip='192.168.59.103', port=6633)
+    onosController = RemoteController('c0', ip='192.168.59.103', port=6633)
+    onosController2 = RemoteController('c0', ip = '192.168.0.100', port=6633)
     #create mininet instance with testTopo and a remoteController (alternative: controller=OVSController)
-    context.mini = Mininet(topo=context.testTopo, controller=onosController, cleanup=True, ipBase='10.0.0.0/8', autoSetMacs=True,
+    context.mini = Mininet(topo=context.testTopo, controller=onosController2, cleanup=True, ipBase='10.0.0.0/8', autoSetMacs=True,
                            waitConnected=True)
     #set LogLevel (default is "output")
     logLevel = 'warning'
