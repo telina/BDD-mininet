@@ -7,9 +7,7 @@ from mininet.net import *
 from mininet.topo import *
 from mininet.node import *
 from mininet.link import *
-from mininet.cli import *
 from helper import NumberConverter, MininetHelper
-from FlowEntrys import FlowTable
 from environment import *
 
 
@@ -30,11 +28,9 @@ def step_addHost(context, number):
     numberOfHosts = NumberConverter.convertNumber(number)
     MininetHelper.addHosts(context.mini, numberOfHosts)
 
-
 @given('we connect all switches with each other')
 def step_fullMeshedNet(context):
     MininetHelper.createFullMeshedNet(context.mini)
-
 
 @given('we connect switch {sw1} to switch {sw2}')
 def step_connect(context, sw1, sw2):
@@ -64,37 +60,26 @@ def step_ping(context, hst1, hst2):
     timeout = "5"
     packetLoss = 100
     pingCounter = 0
-    while packetLoss > 0 and pingCounter < 5:
+    while packetLoss > 0 and pingCounter < 3:
+        if(pingCounter > 0):
+            #wait some time between two pings
+            sleep(8)
         packetLoss = context.mini.ping((h1,h2), timeout)
         pingCounter += 1
     context.pingResult = packetLoss
 
-
-#doesnt work with onos no flow new flows when link goes down!
-# @when('the link between {nd1} and {nd2} is going down')
-# def step_linkDown(context, nd1, nd2):
-#     #TODO delete
-#     try:
-#         input("Press enter to continue")
-#     except SyntaxError:
-#         pass
-#     #TODO end
-#     node1 = MininetHelper.getNodeFromName(context.mini, nd1)
-#     node2 = MininetHelper.getNodeFromName(context.mini, nd2)
-#     #check if link between nodes is existing
-#     connectionList = node1.connectionsTo(node2)
-#     assert_that(len(connectionList), greater_than(0), "Link between %s and %s found" % (nd1,nd2))
-#     #find the correct link and stop it => link status will be set to "MISSING"
-#     for link in context.mini.links:
-#         if((str(node1.name + "-") in str(link.intf1) and str(node2.name + "-") in str(link.intf2)) or
-#                (str(node1.name + "-") in str(link.intf2) and str(node2.name + "-") in str(link.intf1))):
-#             link.stop()
-#     #TODO delete
-#     try:
-#         input("Press enter to continue")
-#     except SyntaxError:
-#         pass
-#     #TODO end
+@when('the link between {nd1} and {nd2} is going down')
+def step_linkDown(context, nd1, nd2):
+    node1 = MininetHelper.getNodeFromName(context.mini, nd1)
+    node2 = MininetHelper.getNodeFromName(context.mini, nd2)
+    #check if link between nodes is existing
+    connectionList = node1.connectionsTo(node2)
+    assert_that(len(connectionList), greater_than(0), "Link between %s and %s found" % (nd1,nd2))
+    #find the correct link and stop it => link status will be set to "MISSING"
+    for link in context.mini.links:
+        if((str(node1.name + "-") in str(link.intf1) and str(node2.name + "-") in str(link.intf2)) or
+               (str(node1.name + "-") in str(link.intf2) and str(node2.name + "-") in str(link.intf1))):
+            link.stop()
 
 @when('we send a http request from host {hst1} to host {hst2}')
 def step_httpRequest(context, hst1, hst2):
@@ -137,7 +122,6 @@ def step_test_connection(context, sw1, sw2):
     else:
         #no links at all
         assert_that(len(connectionList), equal_to(0))
-
 
 @then('the ping succeeds')
 def step_pingSucceed(context):
