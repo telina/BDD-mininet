@@ -1,26 +1,31 @@
 Feature: set up and test a small topology
 
+  @OVS
   Scenario: Nr.1 connection of switches
     Given a single switch
       And a single switch
       And we connect switch s1 to switch s2
      Then switch s1 and switch s2 will share a link
 
+  @OVS
   Scenario: Nr.2 connection of switches
     Given a set of three switches
       And we connect switch s1 to switch s2
      Then switch s1 and switch s3 will not share a link
 
+  @OVS
   Scenario: Nr.3 connection of switches
     Given a set of 3 switches
       And we connect all switches with each other
      Then switch s1 and switch s3 will share a link
 
+  @OVS
   Scenario: Nr.4 connection of switches
     Given a set of four switches
       And we connect all switches with each other
      Then switch s1 and switch s4 will share a link
 
+  @OVS
   Scenario: Nr.5 connection of switches
     Given a set of 4 switches
       And we connect switch s1 to switch s2
@@ -29,13 +34,14 @@ Feature: set up and test a small topology
      Then switch s1 and switch s2 will share a link
       And switch s3 and switch s4 will not share a link
 
+  @OVS
   Scenario: Nr.6 two connected switches, with link going down
     Given a set of two switches
       And we connect switch s1 to switch s2
      When the link between s1 and s2 is going down
      Then switch s1 and switch s2 will not share a link
 
-  @unstable
+  @unstable @OVS
   Scenario: Nr.7 connection of 2 switches and 2 hosts
     Given a set of 2 switches
       And a set of two hosts
@@ -54,7 +60,7 @@ Feature: set up and test a small topology
      When host h1 pings host h2
      Then the ping succeeds
 
-  @unstable
+  @unstable @OVS
   Scenario: Nr.9 tree topo with depth 1, 4 switches and 2 hosts
     Given a set of 4 switches
       And a set of two hosts
@@ -66,7 +72,7 @@ Feature: set up and test a small topology
      When host h1 pings host h2
      Then the ping succeeds
 
-  @unstable
+  @unstable @OVS
   Scenario: Nr.10 tree topo with depth 2, 7 switches and 2 hosts
     Given a set of 7 switches
       And a set of two hosts
@@ -81,6 +87,7 @@ Feature: set up and test a small topology
       When host h1 pings host h2
       Then the ping succeeds
 
+  @OVS
   Scenario: Nr.11 bus topo with 3 switches and 2 hosts
     Given a set of 4 switches
       And a set of two hosts
@@ -92,6 +99,7 @@ Feature: set up and test a small topology
      When host h1 pings host h2
      Then the ping succeeds
 
+  @OVS
   Scenario: Nr.12 connection of switches
     Given a set of two switches
       And a set of 2 hosts
@@ -102,6 +110,7 @@ Feature: set up and test a small topology
      When we send a http request from host h2 to host h1
      Then the request succeeds
 
+  @OVS
   Scenario: Nr.13 two connected switches, with link going down
     Given a set of two switches
       And a set of 2 hosts

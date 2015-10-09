@@ -4,7 +4,6 @@ from mininet.topo import *
 from mininet.net import *
 from mininet.node import OVSController, RemoteController
 from mininet.log import MininetLogger
-#from mininet.link import *
 from mininet.clean import Cleanup
 from time import sleep
 import os
@@ -17,7 +16,7 @@ def before_scenario(context,scenario):
     context.testTopo = Topo()
     #check environment variables
     try:
-        os.environ['DefaultController'] == True
+        os.environ['DefaultController'] == True or "true"
         chooseDefault = True
     except KeyError:
         chooseDefault = False
@@ -35,11 +34,11 @@ def before_scenario(context,scenario):
         else:
             controller = Controller('c0', ip='127.0.0.1', port=6633)
     #create mininet instance with testTopo and a remoteController (alternative: controller=OVSController)
-    context.mini = Mininet(topo=context.testTopo, controller=controller, cleanup=True, ipBase='10.0.0.0/8', autoSetMacs=True,
-                           waitConnected=True)
+    context.mini = Mininet(topo=context.testTopo, controller=controller, cleanup=True,
+                           ipBase='10.0.0.0/8', autoSetMacs=True, waitConnected=True)
     #set LogLevel (default is "output")
     logLevel = 'warning'
-    logLevel = 'output'
+    #logLevel = 'output'
     MininetLogger(context.mini).setLogLevel(logLevel)
 
 def before_step(context, step):
