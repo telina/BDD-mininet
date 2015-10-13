@@ -9,7 +9,6 @@ from time import sleep
 import os
 
 
-
 def before_scenario(context,scenario):
     context.mininetStarted = False
     #create testTopo
@@ -37,8 +36,14 @@ def before_scenario(context,scenario):
     context.mini = Mininet(topo=context.testTopo, controller=controller, cleanup=True,
                            ipBase='10.0.0.0/8', autoSetMacs=True, waitConnected=True)
     #set LogLevel (default is "output")
-    logLevel = 'warning'
-    #logLevel = 'output'
+    #logLevel ='warning'
+    try:
+        logLevel = os.environ['MininetLogLevel']
+        if(not logLevel == 'output'):
+            logLevel='warning'
+    except KeyError:
+        #logLevel standard is 'output'
+        logLevel = 'warning'
     MininetLogger(context.mini).setLogLevel(logLevel)
 
 def before_step(context, step):

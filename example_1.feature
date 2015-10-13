@@ -41,7 +41,7 @@ Feature: set up and test a small topology
      When the link between s1 and s2 is going down
      Then switch s1 and switch s2 will not share a link
 
-  @unstable @OVS
+  @unstable @OVS @test
   Scenario: Nr.7 connection of 2 switches and 2 hosts
     Given a set of 2 switches
       And a set of two hosts
