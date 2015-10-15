@@ -41,7 +41,7 @@ Feature: set up and test a small topology
      When the link between s1 and s2 is going down
      Then switch s1 and switch s2 will not share a link
 
-  @unstable @OVS @test
+  @unstable @OVS
   Scenario: Nr.7 connection of 2 switches and 2 hosts
     Given a set of 2 switches
       And a set of two hosts
@@ -146,6 +146,7 @@ Feature: set up and test a small topology
      When host h1 pings host h2
      Then the ping traffic from host h1 to host h2 takes the route across switch s4
 
+  @test
   Scenario: Nr.16 simple net with 3 routes between hosts
     Given a set of 10 switches
       And a set of 2 hosts

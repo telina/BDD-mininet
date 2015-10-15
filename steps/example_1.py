@@ -86,7 +86,7 @@ def step_httpRequest(context, hst1, hst2):
     h1 = MininetHelper.getNodeFromName(context.mini, hst1)
     h2 = MininetHelper.getNodeFromName(context.mini, hst2)
     #send request
-    cmdString = "wget -O - %s" % h2.IP()
+    cmdString = "wget -O - --timeout=30 %s" % h2.IP()
     responseArray = h1.pexec(cmdString)
     #write response (Exitcode) in context variable
     response = responseArray[2]

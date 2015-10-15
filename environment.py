@@ -5,40 +5,57 @@ from mininet.net import *
 from mininet.node import OVSController, RemoteController
 from mininet.log import MininetLogger
 from mininet.clean import Cleanup
+from controllerHelper import ControllerSetup, OnosRestAPI
 from time import sleep
 import os
-
 
 def before_scenario(context,scenario):
     context.mininetStarted = False
     #create testTopo
     context.testTopo = Topo()
-    #check environment variables
+    #create controller
     try:
-        os.environ['DefaultController'] == True or "true"
-        chooseDefault = True
+        onosIpPort = os.environ['ONOS_CONTROLLER']
+        if ':' in onosIpPort:
+            onosIP, onosPort = onosIpPort.split( ':' )
+        onosChosen = True
     except KeyError:
-        chooseDefault = False
-    #create remoteController
-    port = 6633
+        onosChosen = False
     try:
-        controllerIP = os.environ['RemoteController']
-        if ':' in controllerIP:
-            controllerIP, port = controllerIP.split( ':' )
-            port = int(port)
-        controller = RemoteController('c0', ip=controllerIP, port=port)
+        controllerIpPort = os.environ['REMOTE_CONTROLLER']
+        if ':' in controllerIpPort:
+            remoteIP, remotePort = controllerIpPort.split( ':' )
+        remoteChosen = True
     except KeyError:
-        if(chooseDefault):
-            controller = DefaultController('c0', controller=OVSController)
-        else:
-            controller = Controller('c0', ip='127.0.0.1', port=6633)
-    #create mininet instance with testTopo and a remoteController (alternative: controller=OVSController)
+        remoteChosen = False
+    try:
+        os.environ['DEFAULT_CONTROLLER'] == True or "true"
+        defaultChosen = True
+    except KeyError:
+        defaultChosen = False
+    #set controllerspecific
+    if(onosChosen):
+        controller = ControllerSetup.returnController(onosIP, onosPort)
+        #default port for RestAPI is 8181
+        onosRest = OnosRestAPI(onosIP)
+        #prevents flapping behavior of tests. It's not the best solution, but for now it works.
+        payload = {"flowTimeout":"5"}
+        onosRest.setOnosConfig(payload)
+    elif(remoteChosen):
+        controller = ControllerSetup.returnController(remoteIP, remotePort)
+    elif(defaultChosen):
+        controller = ControllerSetup.returnDefaultController()
+    else:
+        controller = ControllerSetup.returnController()
+        #Controller('c0', ip='127.0.0.1', port=6633)
+
+    #create mininet instance with testTopo and a controller
     context.mini = Mininet(topo=context.testTopo, controller=controller, cleanup=True,
                            ipBase='10.0.0.0/8', autoSetMacs=True, waitConnected=True)
     #set LogLevel (default is "output")
     #logLevel ='warning'
     try:
-        logLevel = os.environ['MininetLogLevel']
+        logLevel = os.environ['MININET_LOGLEVEL']
         if(not logLevel == 'output'):
             logLevel='warning'
     except KeyError:

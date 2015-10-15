@@ -6,6 +6,7 @@ from hamcrest import *
 from mininet.topo import *
 from mininet.net import *
 from mininet.node import OVSController, RemoteController
+import requests
 
 class MininetHelper(object):
 
@@ -33,7 +34,7 @@ class MininetHelper(object):
             mininet.addSwitch(switchName)
 
     @classmethod
-    def addHosts(cls,mininet, numberOfHosts):
+    def addHosts(cls, mininet, numberOfHosts):
         for i in range (1, numberOfHosts+1):
             hostName = "h" + str(i)
             mininet.addHost(hostName)
@@ -84,5 +85,7 @@ class NumberConverter(object):
             convNumber = cls.MAP[name]
             assert_that(convNumber, greater_than(0), "number greater than 0")
             return convNumber
+
+
 
 
