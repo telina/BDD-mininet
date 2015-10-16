@@ -60,7 +60,7 @@ def step_ping(context, hst1, hst2):
     timeout = "5"
     packetLoss = 100
     pingCounter = 0
-    while packetLoss > 0 and pingCounter < 3:
+    while packetLoss > 0 and pingCounter < 4:
         if(pingCounter > 0):
             #wait some time between two pings
             sleep(8)
@@ -86,7 +86,7 @@ def step_httpRequest(context, hst1, hst2):
     h1 = MininetHelper.getNodeFromName(context.mini, hst1)
     h2 = MininetHelper.getNodeFromName(context.mini, hst2)
     #send request
-    cmdString = "wget -O - --timeout=30 %s" % h2.IP()
+    cmdString = "wget -O - --tries=2  -T30 %s" % h2.IP()
     responseArray = h1.pexec(cmdString)
     #write response (Exitcode) in context variable
     response = responseArray[2]

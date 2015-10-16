@@ -37,10 +37,11 @@ def before_scenario(context,scenario):
     if(onosChosen):
         controller = ControllerSetup.returnController(onosIP, onosPort)
         #default port for RestAPI is 8181
-        onosRest = OnosRestAPI(onosIP)
+        context.onosRest = OnosRestAPI(onosIP)
         #prevents flapping behavior of tests. It's not the best solution, but for now it works.
         payload = {"flowTimeout":"5"}
-        onosRest.setOnosConfig(payload)
+        context.onosRest.setOnosConfig(payload)
+        context.onosRest.setOnosIntent("00:00:00:00:00:01", "00:00:00:00:00:02")
     elif(remoteChosen):
         controller = ControllerSetup.returnController(remoteIP, remotePort)
     elif(defaultChosen):
@@ -74,6 +75,7 @@ def before_step(context, step):
         sleep(0.50)
 
 def after_scenario(context,scenario):
+    context.onosRest.removeOnosIntens()
     Cleanup.cleanup()
 
 def buildAndStart(context):
