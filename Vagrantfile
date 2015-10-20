@@ -80,9 +80,9 @@ Vagrant.configure(2) do |config|
     apt-get install -y python-pip
     pip install virtualenv
     git clone https://github.com/lsinfo3/BDD-mininet /home/vagrant/BDD-mininet
-    virtualenv /home/vagrant/venv
-    source /home/vagrant/venv/bin/activate
     cd /home/vagrant/BDD-mininet
+    virtualenv /home/vagrant/BDD-mininet/venv
+    source /home/vagrant/BDD-mininet/venv/bin/activate
     pip install -r requirements.txt
     echo
     echo "Now login using"
@@ -90,7 +90,7 @@ Vagrant.configure(2) do |config|
     echo "and gain root privileges using"
     echo "    sudo -s"
     echo "Then continue with"
-    echo "    source /home/vagrant/venv/bin/activate; cd /home/vagrant/BDD-mininet"
+    echo "    source /home/vagrant/BDD-mininet/venv/bin/activate; cd /home/vagrant/BDD-mininet"
     echo "To run the tests, execute"
     echo "    behave"
     echo "then."
