@@ -75,7 +75,7 @@ Last step is the installation of the required software with the requirements.txt
 
 
 ### Environment Variables
-Now, before you start the code, you need to set a few environment variables as follows:
+Now, before you run the code, you need to set a few environment variables as follows:
 * "ONOS_CONTROLLER" -> In case you are using the Onos Controller you need to set this variable. (e.g `export ONOS_CONTROLLER=192.168.0.1:6632`) The default port ist 6633.
 * "REMOTE_CONTROLLER"  -> To use a controller of your choice set the "RemoteController"-variable to an IP and PORT (e.g. `export REMOTE_CONTROLLER=192.168.0.1:6631`) The default Port is 6633.
 * "DEFAULT_CONTROLLER" -> If you want to test a small scenario which only needs simple forwarding behavior, you can set this variable to true. (e.g. `export DEFAULT_CONTROLLER=True`) This enables the OVSController.

@@ -6,4 +6,3 @@ PyHamcrest==1.8.5
 requests==2.8.0
 six==1.9.0
 wheel==0.24.0
-mininet==2.2.1
