@@ -66,16 +66,12 @@ Setup and start a virtual environment named "venv":
 
 `virtualenv /home/vagrant/BDD-mininet/venv`
 
-`source /home/vagrant/BDD-vagrant/venv/bin/activate`
+`source /home/vagrant/BDD-mininet/venv/bin/activate`
 
 
 Last step is the installation of the required software with the requirements.txt file that comes with the code:
 
 `sudo pip install -r requirements.txt`
-
-After executing this command you should see following output:
-
-"Successfully installed behave enum34 parse parse-type PyHamcrest requests" 
 
 
 ### Environment Variables
@@ -90,8 +86,8 @@ Switch to the folder in which you placed your "*.feature" file and type "behave"
 In case you just want to execute tagged tests type `behave --tags=yourTag`
 In case you just want to execute alls test except your tagged ones, type `behave --tags=-yourTag`
 Tags:
-@unstable -> flapping behavior with Onos in ractive mode
-@OVS      -> works with OVS (DEFAULT_CONTROLLER=True) (no STP needed)
+	@unstable -> flapping behavior with Onos in ractive mode
+	@OVS      -> works with OVS (DEFAULT_CONTROLLER=True) (no STP needed)
 
 # Additional
 

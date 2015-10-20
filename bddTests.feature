@@ -41,7 +41,7 @@ Feature: set up and test a small topology
      When the link between s1 and s2 is going down
      Then switch s1 and switch s2 will not share a link
 
-  @unstable @OVS
+  @OVS
   Scenario: Nr.7 connection of 2 switches and 2 hosts
     Given a set of 2 switches
       And a set of two hosts
@@ -60,7 +60,7 @@ Feature: set up and test a small topology
      When host h1 pings host h2
      Then the ping succeeds
 
-  @unstable @OVS
+  @OVS
   Scenario: Nr.9 tree topo with depth 1, 4 switches and 2 hosts
     Given a set of 4 switches
       And a set of two hosts
@@ -72,7 +72,7 @@ Feature: set up and test a small topology
      When host h1 pings host h2
      Then the ping succeeds
 
-  @unstable @OVS
+  @OVS
   Scenario: Nr.10 tree topo with depth 2, 7 switches and 2 hosts
     Given a set of 7 switches
       And a set of two hosts
@@ -121,7 +121,7 @@ Feature: set up and test a small topology
       And host h1 pings host h2
      Then the ping fails
 
-  @unstable
+
   Scenario: Nr.14 mesh net, with single link going down
     Given a set of 4 switches
       And a set of two hosts
@@ -132,7 +132,7 @@ Feature: set up and test a small topology
       And host h1 pings host h2
      Then the ping succeeds
 
-  @unstable
+
   Scenario: Nr.15 simple net with route identification
     Given a set of 5 switches
       And a set of 2 hosts
@@ -146,7 +146,7 @@ Feature: set up and test a small topology
      When host h1 pings host h2
      Then the ping traffic from host h1 to host h2 takes the route across switch s4
 
-  @test
+
   Scenario: Nr.16 simple net with 3 routes between hosts
     Given a set of 10 switches
       And a set of 2 hosts
@@ -165,6 +165,7 @@ Feature: set up and test a small topology
       And we connect host h2 to switch s10
      When host h1 pings host h2
      Then the ping traffic from host h1 to host h2 takes the route across switch s8
+
 
   Scenario: Nr.17 simple net with route identification
     Given a set of 5 switches

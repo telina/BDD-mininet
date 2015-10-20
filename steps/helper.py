@@ -1,6 +1,6 @@
 __author__ = 'Bene'
 
-from FlowEntrys import FlowTable
+from flowEntrys import FlowTable
 from behave import *
 from hamcrest import *
 from mininet.topo import *

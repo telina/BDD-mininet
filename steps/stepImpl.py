@@ -60,10 +60,11 @@ def step_ping(context, hst1, hst2):
     timeout = "5"
     packetLoss = 100
     pingCounter = 0
-    while packetLoss > 0 and pingCounter < 4:
+    pingMaxCount = 5
+    while packetLoss > 0 and pingCounter < pingMaxCount:
         if(pingCounter > 0):
             #wait some time between two pings
-            sleep(8)
+            sleep(1)
         packetLoss = context.mini.ping((h1,h2), timeout)
         pingCounter += 1
     context.pingResult = packetLoss
