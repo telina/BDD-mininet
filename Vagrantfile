@@ -72,17 +72,16 @@ Vagrant.configure(2) do |config|
   config.vm.provision "shell", inline: <<-SHELL
     apt-get update
     apt-get install -y git
-    git clone https://github.com/mininet/mininet /home/vagrant/mininet
-    cd /home/vagrant/mininet
+    git clone https://github.com/mininet/mininet $HOME/mininet
+    cd $HOME/mininet
     git checkout -b 2.2.1 2.2.1
-    cd /home/vagrant
-    mininet/util/install.sh -nfv
+    $HOME/mininet/util/install.sh -nfv
     apt-get install -y python-pip
     pip install virtualenv
-    git clone https://github.com/lsinfo3/BDD-mininet /home/vagrant/BDD-mininet
-    cd /home/vagrant/BDD-mininet
-    virtualenv /home/vagrant/BDD-mininet/venv
-    source /home/vagrant/BDD-mininet/venv/bin/activate
+    git clone https://github.com/lsinfo3/BDD-mininet $HOME/BDD-mininet
+    cd $HOME/BDD-mininet
+    virtualenv $HOME/BDD-mininet/venv
+    source $HOME/BDD-mininet/venv/bin/activate
     pip install -r requirements.txt
     echo
     echo "Now login using"
@@ -90,7 +89,7 @@ Vagrant.configure(2) do |config|
     echo "and gain root privileges using"
     echo "    sudo -s"
     echo "Then continue with"
-    echo "    source /home/vagrant/BDD-mininet/venv/bin/activate; cd /home/vagrant/BDD-mininet"
+    echo "    source $HOME/BDD-mininet/venv/bin/activate; cd $HOME/BDD-mininet"
     echo "To run the tests, execute"
     echo "    behave"
     echo "then."
