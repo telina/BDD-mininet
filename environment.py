@@ -42,6 +42,7 @@ def before_scenario(context,scenario):
         payload = {"flowTimeout":"5"}
         context.onosRest.setOnosConfig(payload)
         context.onosRest.setOnosIntent("00:00:00:00:00:01", "00:00:00:00:00:02")
+        context.onosFlag=True
     elif(remoteChosen):
         controller = ControllerSetup.returnController(remoteIP, remotePort)
     elif(defaultChosen):
@@ -75,7 +76,9 @@ def before_step(context, step):
         sleep(0.50)
 
 def after_scenario(context,scenario):
-    context.onosRest.removeOnosIntens()
+    if context.onosFlag:
+        context.onosRest.removeOnosIntents()
+        context.onosFlag=False
     Cleanup.cleanup()
 
 def buildAndStart(context):

@@ -49,7 +49,7 @@ class OnosRestAPI(object):
         for intent in intentDict.get("intents"):
             self.intentIdList.append(int(intent.get("id"),16))
 
-    def removeOnosIntens(self):
+    def removeOnosIntents(self):
         onosIntents = 'intents/'
         onosApp = 'org.onosproject.openflow/'
         for intentId in self.intentIdList:

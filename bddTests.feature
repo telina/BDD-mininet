@@ -88,7 +88,7 @@ Feature: set up and test a small topology
       Then the ping succeeds
 
   @OVS
-  Scenario: Nr.11 bus topo with 3 switches and 2 hosts
+  Scenario: No.11 bus topo with 3 switches and 2 hosts
     Given a set of 4 switches
       And a set of two hosts
       And we connect switch s1 to switch s2
