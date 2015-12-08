@@ -85,7 +85,3 @@ class NumberConverter(object):
             convNumber = cls.MAP[name]
             assert_that(convNumber, greater_than(0), "number greater than 0")
             return convNumber
-
-
-
-
