@@ -55,8 +55,8 @@ export TF_VAR_os_user_domain_name='lsinfo3'
 
 
 # behave variables
-export BH_VAR_openstack=true
-export BH_VAR_mininet=false
+export BH_VAR_OPENSTACK=true
+export BH_VAR_MININET=false
 
 # additional openStack variables (used for python-os/neutron-client)
 export LC_ALL=C
