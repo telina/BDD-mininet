@@ -1,3 +1,7 @@
 .idea/
 *.pyc
 
+*.pem
+
+terraform.tfstate
+terraform.tfstate.backup
