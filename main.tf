@@ -40,7 +40,7 @@ provider "openstack" {
 #KEYPAIRS (VM, Mac, Steffen)
 resource "openstack_compute_keypair_v2" "bpf" {
     name = "bpf_tf"
-    public_key = "${file("~/.ssh/id_rsa_tf.pub")}"
+    public_key = "${file("~/.ssh/id_rsa.pub")}"
 }
 resource "openstack_compute_keypair_v2" "mac" {
     name = "mac"
@@ -169,7 +169,7 @@ resource "openstack_compute_instance_v2" "default_Instance_1" {
       connection {
           user = "ubuntu"
           type = "ssh"
-          private_key = "${file("~/.ssh/id_rsa_tf")}"
+          private_key = "${file("~/.ssh/id_rsa")}"
           timeout = "2m"
           agent = false
       }
@@ -225,7 +225,7 @@ resource "openstack_compute_instance_v2" "default_Instance_2" {
       connection {
           user = "ubuntu"
           type = "ssh"
-          private_key = "${file("~/.ssh/id_rsa_tf")}"
+          private_key = "${file("~/.ssh/id_rsa")}"
           timeout = "2m"
           agent = false
       }
@@ -259,7 +259,7 @@ resource "openstack_compute_instance_v2" "default_Instance_3" {
       connection {
           user = "ubuntu"
           type = "ssh"
-          private_key = "${file("~/.ssh/id_rsa_tf")}"
+          private_key = "${file("~/.ssh/id_rsa")}"
           timeout = "2m"
           agent = false
       }

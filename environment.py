@@ -6,9 +6,10 @@ from mininet.node import OVSController, RemoteController
 from mininet.log import MininetLogger
 from mininet.clean import Cleanup
 from controllerHelper import ControllerSetup, OnosRestAPI
-from openStackHelper import terraformHelper, neutronHelper
+from openStackHelper import TerraformHelper, NeutronHelper
 from time import sleep
 import os
+from pexpect import pxssh
 import json
 import subprocess
 
@@ -28,11 +29,11 @@ def before_scenario(context,scenario):
     if(context.openStackTest):
         # init openstack environment
         # deploy infrastructure with terraform
-        context.terraform = terraformHelper()
+        context.terraform = TerraformHelper()
         context.terraform.tf_apply()
 
         # init switch ports with neutronclient
-        context.neutron = neutronHelper()
+        context.neutron = NeutronHelper()
         # init port_left
         ipServerVM = context.terraform.tf_get("serverVM_ip")
         macServerVM = context.terraform.tf_get("serverVM_mac")
@@ -42,6 +43,34 @@ def before_scenario(context,scenario):
         macClientVM = context.terraform.tf_get("clientVM_mac")
         context.neutron.nt_setIpMacPair("port_right", ipClientVM, macClientVM)
 
+        # run ssh command on client
+        fipClientVM = context.terraform.tf_get("clientVM_fip")
+        fipServerVM = context.terraform.tf_get("serverVM_fip")
+
+
+        try:
+            s = pxssh.pxssh()
+            ip = fipClientVM
+            username = "ubuntu"
+            password = ""
+            s.login(ip, username, password)
+            s.sendline("ping -c 10 " + ipServerVM)
+            s.prompt()
+            print(s.before)
+            s.sendline("echo $?")
+            s.prompt()
+            print(s.before)
+            tmp = s.before
+            s.logout()
+            s.close()
+        except pxssh.ExceptionPxssh,e:
+            print("pxssh failed on login.")
+            print(str(e))
+
+        if(tmp.splitlines()[1] == "0"):
+            print("ping succeeded")
+        else:
+            print("ping failed")
 
 
         raise Exception("Done")

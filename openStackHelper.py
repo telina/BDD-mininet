@@ -7,7 +7,7 @@ import json
 this class provides basic terraform commands
 before use, make sure config_os file got sourced
 '''
-class terraformHelper (object):
+class TerraformHelper (object):
 
     '''
     deploy openstack environment (defined in "main.tf") with "terraform apply"
@@ -33,7 +33,7 @@ class terraformHelper (object):
 
 
 
-class neutronHelper (object):
+class NeutronHelper (object):
 
     '''
     set additional IP/MAC pair for port

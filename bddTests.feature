@@ -186,10 +186,10 @@
 
     @Openstack
   Scenario: clientVM pings serverVM
-    Given a client VM clientVM
-      And a server VM serverVM
-      And a switch VM switchVM
-      And we connect the clientVM to the switchVM
-      And we connect the serverVM to the switchVM
+    Given a virtual Machine clientVM
+      And a virtual Machine serverVM
+      And a virtual Machine switchVM
+      And we connect clientVM with switchVM
+      And we connect serverVM with switchVM
      When the clientVM pings the serverVM
      Then the ping succeeds

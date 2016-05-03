@@ -85,3 +85,12 @@ class NumberConverter(object):
             convNumber = cls.MAP[name]
             assert_that(convNumber, greater_than(0), "number greater than 0")
             return convNumber
+
+class openStackEnv(object):
+    vmList = []
+
+    @classmethod
+    def validateVM(cls, vm):
+        assert vm is not None
+        assert_that(vm not in cls.vmList, "virtual machine %s exists" % vm)
+        cls.vmList.append(vm)

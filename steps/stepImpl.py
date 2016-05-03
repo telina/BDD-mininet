@@ -7,7 +7,7 @@ from mininet.net import *
 from mininet.topo import *
 from mininet.node import *
 from mininet.link import *
-from helper import NumberConverter, MininetHelper
+from helper import NumberConverter, MininetHelper, openStackEnv
 from environment import *
 
 
@@ -172,8 +172,24 @@ def step_routeIdentification(context, hst1, hst2, sw):
 
 
 
+'''
+#####################################################################################################
+                                        openStack part
+#####################################################################################################
+'''
+
+@given('a virtual Machine {vmName}')
+def step_clientVM(context, vmName):
+    openStackEnv.validateVM(vmName)
 
 
+@given('we connect {vm_1} with {vm_2}')
+def step_clientVM(context, vm_1, vm_2):
+    pass
+
+@when('the {vm_1} pings {vm_2}')
+def step_os_ping(context, vm_1, vm_2):
+    pass
 
 
 
