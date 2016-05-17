@@ -6,7 +6,7 @@ from mininet.node import OVSController, RemoteController
 from mininet.log import MininetLogger
 from mininet.clean import Cleanup
 from controllerHelper import ControllerSetup, OnosRestAPI
-from openStackHelper import TerraformHelper, NeutronHelper
+from openStackHelper import  NeutronHelper
 from time import sleep
 import os
 from pexpect import pxssh
@@ -27,53 +27,54 @@ def before_scenario(context,scenario):
         context.openStackTest = False;
 
     if(context.openStackTest):
+        pass
         # init openstack environment
         # deploy infrastructure with terraform
-        context.terraform = TerraformHelper()
-        context.terraform.tf_apply()
+        # context.terraform = TerraformHelper()
+        # context.terraform.tf_apply()
+        #
+        # # init switch ports with neutronclient
+        # context.neutron = NeutronHelper()
+        # # init port_left
+        # ipServerVM = context.terraform.tf_get("serverVM_ip")
+        # macServerVM = context.terraform.tf_get("serverVM_mac")
+        # context.neutron.nt_setIpMacPair("port_left", ipServerVM, macServerVM)
+        # # init port_right
+        # ipClientVM = context.terraform.tf_get("clientVM_ip")
+        # macClientVM = context.terraform.tf_get("clientVM_mac")
+        # context.neutron.nt_setIpMacPair("port_right", ipClientVM, macClientVM)
+        #
+        # # run ssh command on client
+        # fipClientVM = context.terraform.tf_get("clientVM_fip")
+        # fipServerVM = context.terraform.tf_get("serverVM_fip")
+        #
+        #
+        # try:
+        #     s = pxssh.pxssh()
+        #     ip = fipClientVM
+        #     username = "ubuntu"
+        #     password = ""
+        #     s.login(ip, username, password)
+        #     s.sendline("ping -c 10 " + ipServerVM)
+        #     s.prompt()
+        #     print(s.before)
+        #     s.sendline("echo $?")
+        #     s.prompt()
+        #     print(s.before)
+        #     tmp = s.before
+        #     s.logout()
+        #     s.close()
+        # except pxssh.ExceptionPxssh,e:
+        #     print("pxssh failed on login.")
+        #     print(str(e))
+        #
+        # if(tmp.splitlines()[1] == "0"):
+        #     print("ping succeeded")
+        # else:
+        #     print("ping failed")
 
-        # init switch ports with neutronclient
-        context.neutron = NeutronHelper()
-        # init port_left
-        ipServerVM = context.terraform.tf_get("serverVM_ip")
-        macServerVM = context.terraform.tf_get("serverVM_mac")
-        context.neutron.nt_setIpMacPair("port_left", ipServerVM, macServerVM)
-        # init port_right
-        ipClientVM = context.terraform.tf_get("clientVM_ip")
-        macClientVM = context.terraform.tf_get("clientVM_mac")
-        context.neutron.nt_setIpMacPair("port_right", ipClientVM, macClientVM)
 
-        # run ssh command on client
-        fipClientVM = context.terraform.tf_get("clientVM_fip")
-        fipServerVM = context.terraform.tf_get("serverVM_fip")
-
-
-        try:
-            s = pxssh.pxssh()
-            ip = fipClientVM
-            username = "ubuntu"
-            password = ""
-            s.login(ip, username, password)
-            s.sendline("ping -c 10 " + ipServerVM)
-            s.prompt()
-            print(s.before)
-            s.sendline("echo $?")
-            s.prompt()
-            print(s.before)
-            tmp = s.before
-            s.logout()
-            s.close()
-        except pxssh.ExceptionPxssh,e:
-            print("pxssh failed on login.")
-            print(str(e))
-
-        if(tmp.splitlines()[1] == "0"):
-            print("ping succeeded")
-        else:
-            print("ping failed")
-
-
-        raise Exception("Done")
+        #raise Exception("Done")
 
     else:
     ######################################

@@ -7,8 +7,9 @@ from mininet.net import *
 from mininet.topo import *
 from mininet.node import *
 from mininet.link import *
-from helper import NumberConverter, MininetHelper, openStackEnv
+from helper import NumberConverter, MininetHelper, TerraformHelper, openStackEnv
 from environment import *
+
 
 
 @given('a single switch')
@@ -55,18 +56,31 @@ def step_startWebserver(context, hst):
 
 @when('host {hst1} pings host {hst2}')
 def step_ping(context, hst1, hst2):
-    h1 = MininetHelper.getNodeFromName(context.mini, hst1)
-    h2 = MininetHelper.getNodeFromName(context.mini, hst2)
-    timeout = "5"
-    packetLoss = 100
-    pingCounter = 0
-    pingMaxCount = 5
-    while packetLoss > 0 and pingCounter < pingMaxCount:
-        if(pingCounter > 0):
-            #wait some time between two pings
-            sleep(1)
-        packetLoss = context.mini.ping((h1,h2), timeout)
-        pingCounter += 1
+    # OpenStack part
+    if(context.openStackTest == True):
+        #TODO:
+        '''
+        validate nodes
+        send ping
+        return packetLoss (pingResult)
+        '''
+        context.tf.validateNodes((hst1,hst2))
+        timeout = "5"
+        packetLoss = context.tf.ping(hst1, hst2, timeout)
+    else:
+        # Mininet part
+        h1 = MininetHelper.getNodeFromName(context.mini, hst1)
+        h2 = MininetHelper.getNodeFromName(context.mini, hst2)
+        timeout = "5"
+        packetLoss = 100
+        pingCounter = 0
+        pingMaxCount = 5
+        while packetLoss > 0 and pingCounter < pingMaxCount:
+            if(pingCounter > 0):
+                #wait some time between two pings
+                sleep(1)
+            packetLoss = context.mini.ping((h1,h2), timeout)
+            pingCounter += 1
     context.pingResult = packetLoss
 
 @when('the link between {nd1} and {nd2} is going down')
@@ -174,10 +188,47 @@ def step_routeIdentification(context, hst1, hst2, sw):
 
 '''
 #####################################################################################################
-                                        openStack part
+
+                                        OpenStack part
+
 #####################################################################################################
 '''
 
+
+@given('two hosts connected to one switch')
+def step_build_topo_1(context):
+    #deploy infrastructure and configure ports
+    workingDir = "terraformFiles/flat_1sw_2h"
+    context.tf = TerraformHelper(workingDir)
+    context.tf.build_topo_1()
+    pass
+
+@given('four hosts connected to one switch')
+def step_build_topo_1(context):
+    workingDir = "terraformFiles/flat_1sw_4h"
+    context.tf = TerraformHelper(workingDir)
+    context.tf.build_topo_2()
+    pass
+
+@given('two hosts, each connected to a switch which are connected')
+def step_build_topo_1(context):
+    workingDir = "terraformFiles/flat_2sw_2h"
+    context.tf = TerraformHelper(workingDir)
+    context.tf.build_topo_3()
+    pass
+
+@given('a tree topo with depth one and two hosts on each switch')
+def step_build_topo_1(context):
+    workingDir = "terraformFiles/tree_3sw_4h"
+    context.tf = TerraformHelper(workingDir)
+    context.tf.build_topo_4()
+    pass
+
+
+
+
+
+'''
 @given('a virtual Machine {vmName}')
 def step_clientVM(context, vmName):
     openStackEnv.validateVM(vmName)
@@ -190,6 +241,8 @@ def step_clientVM(context, vm_1, vm_2):
 @when('the {vm_1} pings {vm_2}')
 def step_os_ping(context, vm_1, vm_2):
     pass
+'''
+
 
 
 

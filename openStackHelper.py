@@ -7,30 +7,30 @@ import json
 this class provides basic terraform commands
 before use, make sure config_os file got sourced
 '''
-class TerraformHelper (object):
-
-    '''
-    deploy openstack environment (defined in "main.tf") with "terraform apply"
-    check exitcode to be 0
-    '''
-    def tf_apply(self):
-        return_code = subprocess.call("terraform apply", shell=True)
-        if(return_code != 0):
-            raise Exception("Deploying Openstack with terraform went wrong. Please check terraform *.tf files for errors.")
-
-    # destroys deployed openstack infrastructure
-    def tf_destroy(self):
-        return_code = subprocess.call("terraform destroy", shell=True)
-        subprocess.call("yes", shell=True)
-        if(return_code != 0):
-            raise Exception("Something went wrong during destruction of your openstack infrastructure.")
-
-    # reads output from "output.tf" file and makes IPs, MACs and OS-IDs accessible for behave tests
-    def tf_get(self, arg):
-        outputCMD = 'terraform output ' + arg
-        output = subprocess.Popen(outputCMD , stdout=subprocess.PIPE, shell=True).communicate()[0]
-        return str(output).rstrip()
-
+# class TerraformHelper (object):
+#
+#     '''
+#     deploy openstack environment (defined in "main.tf") with "terraform apply"
+#     check exitcode to be 0
+#     '''
+#     def tf_apply(self):
+#         return_code = subprocess.call("terraform apply", shell=True)
+#         if(return_code != 0):
+#             raise Exception("Something went wrong while deploying the Openstack infrastructure with terraform. Please run the test again. If this doesn't solve the problem, check terraform *.tf files for errors.")
+#
+#     # destroys deployed openstack infrastructure
+#     def tf_destroy(self):
+#         return_code = subprocess.call("terraform destroy -force", shell=True)
+#         subprocess.call("yes", shell=True)
+#         if(return_code != 0):
+#             raise Exception("Something went wrong during destruction of your openstack infrastructure.")
+#
+#     # reads output from "output.tf" file and makes IPs, MACs and OS-IDs accessible for behave tests
+#     def tf_get(self, arg):
+#         outputCMD = 'terraform output ' + arg
+#         output = subprocess.Popen(outputCMD , stdout=subprocess.PIPE, shell=True).communicate()[0]
+#         return str(output).rstrip()
+#
 
 
 class NeutronHelper (object):
