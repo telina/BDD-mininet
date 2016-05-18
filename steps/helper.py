@@ -58,8 +58,6 @@ class MininetHelper(object):
         return FlowTable(switch, flows)
 
 
-
-
 class NumberConverter(object):
     """Map named numbers into numbers."""
     MAP = {
@@ -89,11 +87,32 @@ class NumberConverter(object):
             return convNumber
 
 
+
+'''
+this class provides basic terraform commands
+before use, make sure config_os file got sourced
+'''
+
 class TerraformHelper(object):
 
-    def __init__(cls, wd):
+    '''
+    workingDir changes for each openstack infrastructure
+    valid node names helps to validate test input (only this node names must be used)
+    '''
+    def __init__(cls, wd, logLevel):
         cls.workingDir = wd
         cls.validNodeNames = ("one", "two", "three", "four", "h1", "h2", "h3", "h4")
+        cls.suppressWarning = "2>/dev/null"
+        cls.logLevel = logLevel
+        # will be set to true if infrastructure got deployed without any errors. This is important for later destruction.
+        cls.readyToDestroy = False
+
+    def destroy(cls):
+        cmd = "terraform destroy -force"
+        return_code = cls.subprocessCall(cmd)
+        if(not return_code == 0):
+            raise Exception("Something went wrong during OpenStack destruction. Please manual delete infrastructure.")
+
 
     def validateNodes(cls, nodeList):
         for node in nodeList:
@@ -107,23 +126,24 @@ class TerraformHelper(object):
         #get Fip and Ip (Fip(floatingIp) for SSH connection)
         srcFip = cls.tf_get(src+"_fip")
         dstIp = cls.tf_get(dst+"_ip")
+        #establish ssh connection and start ping
         try:
             s = pxssh.pxssh()
             ip = srcFip
             username = "ubuntu"
             password = ""
             s.login(ip, username, password)
-            s.sendline("ping -c 10 " + dstIp)
+            s.sendline("ping -c 10 " + dstIp + " -I eth1")
             s.prompt()
             print(s.before)
             s.sendline("echo $?")
             s.prompt()
-            print(s.before)
+            #print(s.before)
             tmp = s.before
             s.logout()
             s.close()
         except pxssh.ExceptionPxssh,e:
-            print("pxssh failed on login.")
+            print("ssh connection failed on login.")
             print(str(e))
         #get exitCode and return packetLoss
         if(tmp.splitlines()[1] == "0"):
@@ -133,6 +153,7 @@ class TerraformHelper(object):
             packetLoss = -1
             return packetLoss
 
+    # this allows using the same host identifiers for os and mininet tests
     def translateHostName(self, host):
         if(host == "h1"):
             return "one"
@@ -143,35 +164,57 @@ class TerraformHelper(object):
         elif(host == "h4"):
             return "four"
 
-
+    # queries terraform to return output information (e.g. a hosts ip/fip/mac, a switches fip/port etc)
     def tf_get(cls, arg):
         outputCMD = 'terraform output ' + arg
         output = subprocess.Popen(outputCMD, stdout=subprocess.PIPE, cwd=cls.workingDir, shell=True).communicate()[0]
         return str(output).rstrip()
 
+    # send cmd commands via subprocess popen
+    # suppresses errors
+    def startSubprocess(cls, cmd):
+        with open(os.devnull, 'w') as devnull:
+            subprocess.Popen(cmd , stdout=subprocess.PIPE, stderr=devnull, cwd=cls.workingDir, shell=True).communicate()[0]
+
+    # send cmd commands via subprocess call
+    # suppresses errors
+    def subprocessCall(cls, cmd):
+        if(cls.logLevel == "warning"):
+            with open(os.devnull, 'w') as devnull:
+                return subprocess.call(cmd, cwd=cls.workingDir, stdout=devnull, stderr=devnull, shell=True)
+        else:
+            return subprocess.call(cmd, cwd=cls.workingDir, shell=True)
+
+    '''
+    following methods build predefined openStack infrastructures to test on
+    the topologies being built you can see in the README File
+    '''
     def build_topo_1(cls):
-        return_code = subprocess.call("terraform apply", cwd=cls.workingDir, shell=True)
+        return_code = cls.subprocessCall("terraform apply")
         assert_that(return_code, equal_to(0), "Something went wrong while deploying the Openstack infrastructure with terraform. Please run the test again. If this doesn't solve the problem, check terraform *.tf files for errors." )
-        #if(return_code != 0):
-        #     raise Exception("Something went wrong while deploying the Openstack infrastructure with terraform. Please run the test again. If this doesn't solve the problem, check terraform *.tf files for errors.")
+        if(return_code == 0):
+            cls.readyToDestroy = True;
         cls.config_topo_1()
-        raise Exception("Done")
 
     def build_topo_2(cls):
-        return_code = subprocess.call("terraform apply", cwd=cls.workingDir, shell=True)
+        return_code = cls.subprocessCall("terraform apply")
         assert_that(return_code, equal_to(0), "Something went wrong while deploying the Openstack infrastructure with terraform. Please run the test again. If this doesn't solve the problem, check terraform *.tf files for errors." )
+        if(return_code == 0):
+            cls.readyToDestroy = True;
         cls.config_topo_2()
-        raise Exception("Done")
 
     def build_topo_3(cls):
-        return_code = subprocess.call("terraform apply", cwd=cls.workingDir, shell=True)
+        return_code = cls.subprocessCall("terraform apply")
         assert_that(return_code, equal_to(0), "Something went wrong while deploying the Openstack infrastructure with terraform. Please run the test again. If this doesn't solve the problem, check terraform *.tf files for errors." )
+        if(return_code == 0):
+            cls.readyToDestroy = True;
         cls.config_topo_3()
-        raise Exception("Done")
 
     def build_topo_4(cls):
-        return_code = subprocess.call("terraform apply", cwd=cls.workingDir, shell=True)
+        return_code = cls.subprocessCall("terraform apply")
         assert_that(return_code, equal_to(0), "Something went wrong while deploying the Openstack infrastructure with terraform. Please run the test again. If this doesn't solve the problem, check terraform *.tf files for errors." )
+        if(return_code == 0):
+            cls.readyToDestroy = True;
         cls.config_topo_4()
 
     def config_topo_1(cls):
@@ -183,10 +226,10 @@ class TerraformHelper(object):
         mac_2 = cls.tf_get('two_mac')
         setAddressPairs_1 = 'neutron port-update ' + port_1 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_2
-        subprocess.Popen(setAddressPairs_1, stdout=subprocess.PIPE, cwd=cls.workingDir, shell=True).communicate()[0]
+        cls.startSubprocess(setAddressPairs_1)
         setAddressPairs_2 = 'neutron port-update ' + port_2 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_1
-        subprocess.Popen(setAddressPairs_2, stdout=subprocess.PIPE, cwd=cls.workingDir, shell=True).communicate()[0]
+        cls.startSubprocess(setAddressPairs_2)
 
     def config_topo_2(cls):
         #set "--allowed-address-pair" for topo_2 = "one switch with four hosts"
@@ -204,25 +247,25 @@ class TerraformHelper(object):
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_2 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_3 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_4
-        subprocess.Popen(setAddressPairs_1 , stdout=subprocess.PIPE, cwd=cls.workingDir, shell=True).communicate()[0]
+        cls.startSubprocess(setAddressPairs_1)
         #configure port_2 (where vm two is connected to)
         setAddressPairs_2 = 'neutron port-update ' + port_2 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_1 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_3 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_4
-        subprocess.Popen(setAddressPairs_2 , stdout=subprocess.PIPE, cwd=cls.workingDir, shell=True).communicate()[0]
+        cls.startSubprocess(setAddressPairs_2)
         #configure port_3 (where vm three is connected to)
         setAddressPairs_3 = 'neutron port-update ' + port_3 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_1 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_2 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_4
-        subprocess.Popen(setAddressPairs_3 , stdout=subprocess.PIPE, cwd=cls.workingDir, shell=True).communicate()[0]
+        cls.startSubprocess(setAddressPairs_3)
         #configure port_4 (where vm four is connected to)
         setAddressPairs_4 = 'neutron port-update ' + port_4 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_1 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_2 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_3
-        subprocess.Popen(setAddressPairs_4 , stdout=subprocess.PIPE, cwd=cls.workingDir, shell=True).communicate()[0]
+        cls.startSubprocess(setAddressPairs_4)
 
     def config_topo_3(cls):
         #set "--allowed-address-pair" for topo_3 = "two switches with two hosts"
@@ -236,19 +279,19 @@ class TerraformHelper(object):
         #configure sw1_port_1 (where vm one is connected to)
         setAddressPairs_1 = 'neutron port-update ' + sw1_port_1 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_2
-        subprocess.Popen(setAddressPairs_1 , stdout=subprocess.PIPE, cwd=cls.workingDir, shell=True).communicate()[0]
+        cls.startSubprocess(setAddressPairs_1)
         #configure sw1_port_2 (where the other switch is connected to)
         setAddressPairs_2 = 'neutron port-update ' + sw1_port_2 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_1
-        subprocess.Popen(setAddressPairs_2 , stdout=subprocess.PIPE, cwd=cls.workingDir, shell=True).communicate()[0]
+        cls.startSubprocess(setAddressPairs_2)
         #configure sw2_port_1 (where vm two is connected to)
         setAddressPairs_3 = 'neutron port-update ' + sw2_port_1 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_1
-        subprocess.Popen(setAddressPairs_3 , stdout=subprocess.PIPE, cwd=cls.workingDir, shell=True).communicate()[0]
+        cls.startSubprocess(setAddressPairs_3)
         #configure sw2_port_2 (where the other switch is connected to)
         setAddressPairs_4 = 'neutron port-update ' + sw2_port_2 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_2
-        subprocess.Popen(setAddressPairs_4 , stdout=subprocess.PIPE, cwd=cls.workingDir, shell=True).communicate()[0]
+        cls.startSubprocess(setAddressPairs_4)
 
 
     def config_topo_4(cls):
@@ -271,56 +314,47 @@ class TerraformHelper(object):
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_2 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_3 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_4
-        subprocess.Popen(setAddressPairs_1 , stdout=subprocess.PIPE, cwd=cls.workingDir, shell=True).communicate()[0]
+        cls.startSubprocess(setAddressPairs_1)
         #configure sw1_port_2 (where vm two is connected to)
         setAddressPairs_2 = 'neutron port-update ' + sw1_port_2 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_1 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_3 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_4
-        subprocess.Popen(setAddressPairs_2 , stdout=subprocess.PIPE, cwd=cls.workingDir, shell=True).communicate()[0]
+        cls.startSubprocess(setAddressPairs_2)
         #configure sw1_port_3 (where the other switch is connected to)
         setAddressPairs_3 = 'neutron port-update ' + sw1_port_3 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_1 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_2
-        subprocess.Popen(setAddressPairs_3 , stdout=subprocess.PIPE, cwd=cls.workingDir, shell=True).communicate()[0]
+        cls.startSubprocess(setAddressPairs_3)
         #Switch 2
         #configure sw2_port_1 (where vm three is connected to)
         setAddressPairs_4 = 'neutron port-update ' + sw2_port_1 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_1 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_2 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_4
-        subprocess.Popen(setAddressPairs_4 , stdout=subprocess.PIPE, cwd=cls.workingDir, shell=True).communicate()[0]
+        cls.startSubprocess(setAddressPairs_4)
         #configure sw2_port_2 (where vm four is connected to)
         setAddressPairs_5 = 'neutron port-update ' + sw2_port_2 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_1 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_2 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_3
-        subprocess.Popen(setAddressPairs_5 , stdout=subprocess.PIPE, cwd=cls.workingDir, shell=True).communicate()[0]
+        cls.startSubprocess(setAddressPairs_5)
         #configure sw2_port_3 (where the other switch is connected to)
         setAddressPairs_6 = 'neutron port-update ' + sw2_port_3 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_3 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_4
-        subprocess.Popen(setAddressPairs_6 , stdout=subprocess.PIPE, cwd=cls.workingDir, shell=True).communicate()[0]
+        cls.startSubprocess(setAddressPairs_6)
         #Switch 3
         #configure sw3_port_1 (where the other switch is connected to)
         setAddressPairs_7 = 'neutron port-update ' + sw3_port_1 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_3 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_4
-        subprocess.Popen(setAddressPairs_7 , stdout=subprocess.PIPE, cwd=cls.workingDir, shell=True).communicate()[0]
+        cls.startSubprocess(setAddressPairs_7)
         #configure sw3_port_2 (where the other switch is connected to)
         setAddressPairs_8 = 'neutron port-update ' + sw3_port_2 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_1 + \
                           ' --allowed-address-pair ip_address=' + ip_cidr + ',mac_address=' + mac_2
-        subprocess.Popen(setAddressPairs_8 , stdout=subprocess.PIPE, cwd=cls.workingDir, shell=True).communicate()[0]
+        cls.startSubprocess(setAddressPairs_8)
 
-
-
-class openStackEnv(object):
-    vmList = []
-
-    def validateVM(cls, vm):
-        assert vm is not None
-        assert_that(vm not in cls.vmList, "virtual machine %s exists" % vm)
-        cls.vmList.append(vm)
 
 

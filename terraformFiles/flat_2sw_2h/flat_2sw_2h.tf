@@ -186,7 +186,7 @@ resource "openstack_compute_floatingip_v2" "floatip_2" {
 
 #VM switch_1
 resource "openstack_compute_instance_v2" "default_Instance_sw1" {
-  name = "switch_1"
+  name = "switch1"
   image_name = "ubuntu14.04-x64"
   flavor_name = "i3.xmall"
   #security_groups = ["bpf_tf_secgroup_1"]
@@ -206,11 +206,11 @@ resource "openstack_compute_instance_v2" "default_Instance_sw1" {
   provisioner "remote-exec" {
       # edit /etc/hosts to prevent error "unable to resolve host switch"
       inline = [
-          "sudo sed -i 's/ localhost/ localhost switch_1/' /etc/hosts",
+          "sudo sed -i 's/ localhost/ localhost switch1/' /etc/hosts",
           "sudo ifconfig eth1 promisc ${openstack_networking_port_v2.sw1_port_1.fixed_ip.0.ip_address} netmask 255.255.0.0 up",
           "sudo ifconfig eth2 promisc ${openstack_networking_port_v2.sw1_port_2.fixed_ip.0.ip_address} netmask 255.255.0.0 up",
           "sudo apt-get update",
-          "sudo apt-get -y upgrade",
+          #"sudo apt-get -y upgrade",
           "sudo apt-get update",
           "sudo apt-get install -y openvswitch-switch openvswitch-common",
           "sudo ovs-vsctl add-br myBridge",
@@ -235,7 +235,7 @@ resource "openstack_compute_instance_v2" "default_Instance_sw1" {
 
 #VM switch_2
 resource "openstack_compute_instance_v2" "default_Instance_sw2" {
-  name = "switch_2"
+  name = "switch2"
   image_name = "ubuntu14.04-x64"
   flavor_name = "i3.xmall"
   #security_groups = ["bpf_tf_secgroup_1"]
@@ -255,11 +255,11 @@ resource "openstack_compute_instance_v2" "default_Instance_sw2" {
   provisioner "remote-exec" {
       # edit /etc/hosts to prevent error "unable to resolve host switch"
       inline = [
-          "sudo sed -i 's/ localhost/ localhost switch_2/' /etc/hosts",
+          "sudo sed -i 's/ localhost/ localhost switch2/' /etc/hosts",
           "sudo ifconfig eth1 promisc ${openstack_networking_port_v2.sw2_port_1.fixed_ip.0.ip_address} netmask 255.255.0.0 up",
           "sudo ifconfig eth2 promisc ${openstack_networking_port_v2.sw2_port_2.fixed_ip.0.ip_address} netmask 255.255.0.0 up",
           "sudo apt-get update",
-          "sudo apt-get -y upgrade",
+          #"sudo apt-get -y upgrade",
           "sudo apt-get update",
           "sudo apt-get install -y openvswitch-switch openvswitch-common",
           "sudo ovs-vsctl add-br myBridge",
@@ -330,7 +330,7 @@ resource "openstack_compute_instance_v2" "default_Instance_2" {
       inline = [
           "sudo sed -i 's/ localhost/ localhost two/' /etc/hosts",
           "sudo ifconfig eth1 ${openstack_compute_instance_v2.default_Instance_2.network.1.fixed_ip_v4} netmask 255.255.0.0",
-          "sudo apt-get update",
+          #"sudo apt-get update",
           "sudo echo 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCUuJ0t4q2vtgYhL+Pevycd6ptnFCCGgFAePIEKq6dmYG8HNrR+VHprfHfn9/8keFuVU2dn0bKR3epV5wEL77O9H5GxNXnVn8JrRNjrIOcwWsua1uMOKumjVsH8IVW0LH+5qUd6zrZ3LP0N52wO8lJpnz4Dk8eTV8lD2Dp+bEIQmvZ1wO+eiWZrhCm59OSiAm2okcpW1NzBBFIwbAK2yhE83F+vZ3ROR9cjIXtvWaYq6EPaSZK1j/7z1Pzuc56by1+uhOlsX6mmXCEcTwhtB6YsMQJ8/s1tLxpNlOLn/C93Lq3AylEifRF/NmHiR/qiQKApks+C5OBq1bDPPFFln3pja6RTGPPt6sAyYv6S4DRspejJilxgKvu3D9XB4T/8Fq6ATTM41zKhn/bwK71F19pCHqtujo71s0F8WNlWE+3/JO+oHtVflMuqhVPI4Jyw/rUH7Rj4pprI7MkOEHIu2R6Xh68ILWhF364M3uXE96cBpBJy/5KZOkCyg2ARls4cjdDrpzjbYmhggY4Qy1LJr/2Yi7bggUpJkq4PVmfGlAVQFGH7qh98Q96bK+utwbZgE8KuRHsFAYPhhWKlLzKcYBh7irtRA8kBAqZ9RV3GOqS2/pl84BaOiu8kPWIeIgLx9LBAoe8E4mLfKLgFhkUbhxGXLzzKyW9SMlcgmHudmsmXCQ== Bene@Bene-MBPs-MacBook-Pro.local' >> ~/.ssh/authorized_keys",
           "sudo echo 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAyRKAea5teRt2KWvkIOnJZ2BPekTSKb0f5mzV87vEap6qcxtVdh1EyHLUhDzkzpgsWiLho6nXTh1iIJnr9D5GFg47Fl70KE9nnjdEuMC7y+RqTxxw1Npi9QuIpIuI/efoWgGEiMQVfooJ/gRDyDwDG/iGXMMlU8s2dDiZ5W/pMKC1ElJzHiws4sorJFcdjLyjPANoCn5YVmZzH9SQTI8Xmsar+opSf311JgDwLRtyuGR3MTFTj3g22MZNNHYj/2pqvYK5n/e9ZlCt2g/Db2jKrTwgjIjwRZfANeYjCY5IHhJsKjGWyLNc+Uuej5GAjDL3DLh0dZzQ1zyQ+ARDB1AYlw== steffen' >> ~/.ssh/authorized_keys"
       ]

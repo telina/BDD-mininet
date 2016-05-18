@@ -174,7 +174,7 @@ resource "openstack_compute_instance_v2" "default_Instance_sw1" {
           "sudo ifconfig eth1 promisc ${openstack_networking_port_v2.sw1_port_1.fixed_ip.0.ip_address} netmask 255.255.0.0 up",
           "sudo ifconfig eth2 promisc ${openstack_networking_port_v2.sw1_port_2.fixed_ip.0.ip_address} netmask 255.255.0.0 up",
           "sudo apt-get update",
-          "sudo apt-get -y upgrade",
+          #"sudo apt-get -y upgrade",
           "sudo apt-get update",
           "sudo apt-get install -y openvswitch-switch openvswitch-common",
           "sudo ovs-vsctl add-br myBridge",

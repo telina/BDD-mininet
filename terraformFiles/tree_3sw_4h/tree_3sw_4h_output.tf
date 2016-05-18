@@ -32,10 +32,10 @@ output "switch2_portId_three" {
 }
 #switch outputs
 output "switch3_Id" {
-    value = "${openstack_compute_instance_v2.default_Instance_sw2.id}"
+    value = "${openstack_compute_instance_v2.default_Instance_sw3.id}"
 }
 output "switch3_fip" {
-    value = "${openstack_compute_floatingip_v2.floatip_sw2.address}"
+    value = "${openstack_compute_floatingip_v2.floatip_sw3.address}"
 }
 output "switch3_portId_one" {
     value = "${openstack_compute_instance_v2.default_Instance_sw3.network.1.port}"

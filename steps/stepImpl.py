@@ -7,7 +7,7 @@ from mininet.net import *
 from mininet.topo import *
 from mininet.node import *
 from mininet.link import *
-from helper import NumberConverter, MininetHelper, TerraformHelper, openStackEnv
+from helper import NumberConverter, MininetHelper, TerraformHelper
 from environment import *
 
 
@@ -199,49 +199,27 @@ def step_routeIdentification(context, hst1, hst2, sw):
 def step_build_topo_1(context):
     #deploy infrastructure and configure ports
     workingDir = "terraformFiles/flat_1sw_2h"
-    context.tf = TerraformHelper(workingDir)
+    context.tf = TerraformHelper(workingDir, context.behaveLogLevel)
     context.tf.build_topo_1()
-    pass
 
 @given('four hosts connected to one switch')
 def step_build_topo_1(context):
     workingDir = "terraformFiles/flat_1sw_4h"
-    context.tf = TerraformHelper(workingDir)
+    context.tf = TerraformHelper(workingDir, context.behaveLogLevel)
     context.tf.build_topo_2()
-    pass
 
 @given('two hosts, each connected to a switch which are connected')
 def step_build_topo_1(context):
     workingDir = "terraformFiles/flat_2sw_2h"
-    context.tf = TerraformHelper(workingDir)
+    context.tf = TerraformHelper(workingDir, context.behaveLogLevel)
     context.tf.build_topo_3()
-    pass
 
-@given('a tree topo with depth one and two hosts on each switch')
+@given('a tree topo with depth one and fanout two')
 def step_build_topo_1(context):
     workingDir = "terraformFiles/tree_3sw_4h"
-    context.tf = TerraformHelper(workingDir)
+    context.tf = TerraformHelper(workingDir, context.behaveLogLevel)
     context.tf.build_topo_4()
-    pass
 
-
-
-
-
-'''
-@given('a virtual Machine {vmName}')
-def step_clientVM(context, vmName):
-    openStackEnv.validateVM(vmName)
-
-
-@given('we connect {vm_1} with {vm_2}')
-def step_clientVM(context, vm_1, vm_2):
-    pass
-
-@when('the {vm_1} pings {vm_2}')
-def step_os_ping(context, vm_1, vm_2):
-    pass
-'''
 
 
 

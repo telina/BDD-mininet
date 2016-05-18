@@ -184,11 +184,11 @@
 
   Feature: Run OpenStack tests
 
-#    @openstack
-#    Scenario: one Switch and two hosts
-#        Given two hosts connected to one switch
-#         When host h1 pings host h2
-#         Then the ping succeeds
+    @openstack
+    Scenario: one Switch and two hosts
+        Given two hosts connected to one switch
+         When host h1 pings host h2
+         Then the ping succeeds
 
 #    @openstack
 #    Scenario: one switch and four hosts
@@ -202,11 +202,11 @@
 #         When host h1 pings host h2
 #         Then the ping succeeds
 
-    @openstack
-    Scenario: tree topo with 4 switches and three switches
-        Given a tree topo with depth one and two hosts on each switch
-         When host h1 pings host h4
-         Then the ping succeeds
+#    @openstack
+#    Scenario: tree topo with three switches and four hosts
+#        Given a tree topo with depth one and fanout two
+#         When host h1 pings host h4
+#         Then the ping succeeds
 
 
 
