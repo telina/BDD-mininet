@@ -275,8 +275,9 @@ resource "openstack_compute_floatingip_v2" "floatip_6" {
 #VM switch_1
 resource "openstack_compute_instance_v2" "default_Instance_sw1" {
   name = "switch1"
-  image_name = "ubuntu14.04-x64"
-  flavor_name = "i3.xmall"
+  #image_name = "ubuntu14.04-x64"
+  image_name = "bdd_os"
+  flavor_name = "bdd_os"
   #security_groups = ["bpf_tf_secgroup_1"]
   security_groups = ["default"]
   region = "RegionOne"
@@ -330,8 +331,9 @@ resource "openstack_compute_instance_v2" "default_Instance_sw1" {
 #VM switch_2
 resource "openstack_compute_instance_v2" "default_Instance_sw2" {
   name = "switch2"
-  image_name = "ubuntu14.04-x64"
-  flavor_name = "i3.xmall"
+  #image_name = "ubuntu14.04-x64"
+  image_name = "bdd_os"
+  flavor_name = "bdd_os"
   #security_groups = ["bpf_tf_secgroup_1"]
   security_groups = ["default"]
   region = "RegionOne"
@@ -385,8 +387,9 @@ resource "openstack_compute_instance_v2" "default_Instance_sw2" {
 #VM switch_3
 resource "openstack_compute_instance_v2" "default_Instance_sw3" {
   name = "switch3"
-  image_name = "ubuntu14.04-x64"
-  flavor_name = "i3.xmall"
+  #image_name = "ubuntu14.04-x64"
+  image_name = "bdd_os"
+  flavor_name = "bdd_os"
   #security_groups = ["bpf_tf_secgroup_1"]
   security_groups = ["default"]
   region = "RegionOne"
@@ -435,8 +438,9 @@ resource "openstack_compute_instance_v2" "default_Instance_sw3" {
 #VM one
 resource "openstack_compute_instance_v2" "default_Instance_1" {
   name = "one"
-  image_name = "ubuntu14.04-x64"
-  flavor_name = "i3.xmall"
+  #image_name = "ubuntu14.04-x64"
+  image_name = "bdd_os"
+  flavor_name = "bdd_os"
   security_groups = ["default"]
   region = "RegionOne"
   key_pair = "bpf_tf"
@@ -466,8 +470,9 @@ resource "openstack_compute_instance_v2" "default_Instance_1" {
 
 resource "openstack_compute_instance_v2" "default_Instance_2" {
   name = "two"
-  image_name = "ubuntu14.04-x64"
-  flavor_name = "i3.xmall"
+  #image_name = "ubuntu14.04-x64"
+  image_name = "bdd_os"
+  flavor_name = "bdd_os"
   #security_groups = ["bpf_tf_secgroup_1"]
   security_groups = ["default"]
   region = "RegionOne"
@@ -496,8 +501,9 @@ resource "openstack_compute_instance_v2" "default_Instance_2" {
 
 resource "openstack_compute_instance_v2" "default_Instance_3" {
   name = "three"
-  image_name = "ubuntu14.04-x64"
-  flavor_name = "i3.xmall"
+  #image_name = "ubuntu14.04-x64"
+  image_name = "bdd_os"
+  flavor_name = "bdd_os"
   #security_groups = ["bpf_tf_secgroup_1"]
   security_groups = ["default"]
   region = "RegionOne"
@@ -526,8 +532,9 @@ resource "openstack_compute_instance_v2" "default_Instance_3" {
 
 resource "openstack_compute_instance_v2" "default_Instance_4" {
   name = "four"
-  image_name = "ubuntu14.04-x64"
-  flavor_name = "i3.xmall"
+  #image_name = "ubuntu14.04-x64"
+  image_name = "bdd_os"
+  flavor_name = "bdd_os"
   #security_groups = ["bpf_tf_secgroup_1"]
   security_groups = ["default"]
   region = "RegionOne"

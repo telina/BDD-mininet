@@ -12,8 +12,66 @@ from pexpect import pxssh
 
 class MininetHelper(object):
 
-    def __init__(cls, mininet):
-        cls.mininetInstanz = mininet
+    # def __init__(cls, mininet):
+    #     cls.mininetInstanz = mininet
+
+    def build_topo_1(cls, mininet):
+        #build topo_1 (one switch, two hosts)
+        # add one switch to mininet topo
+        mininet.addSwitch('s1')
+        # add two hosts to topo
+        mininet.addHost('h1')
+        mininet.addHost('h2')
+        # connect everything
+        mininet.addLink('s1','h1')
+        mininet.addLink('s2','h1')
+
+    def build_topo_2(cls, mininet):
+        #build topo_3 (one switch, four hosts)
+        # add one switch to mininet topo
+        mininet.addSwitch('s1')
+        # add four hosts to topo
+        mininet.addHost('h1')
+        mininet.addHost('h2')
+        mininet.addHost('h3')
+        mininet.addHost('h4')
+        # connect everything
+        mininet.addLink('s1','h1')
+        mininet.addLink('s2','h1')
+        mininet.addLink('s3','h1')
+        mininet.addLink('s4','h1')
+
+    def build_topo_3(cls, mininet):
+        #build topo_3 (two switches, two hosts)
+        # add two switches to mininet topo
+        mininet.addSwitch('s1')
+        mininet.addSwitch('s2')
+        # add two hosts to topo
+        mininet.addHost('h1')
+        mininet.addHost('h2')
+        # connect everything
+        mininet.addLink('s1','s2')
+        mininet.addLink('s1','h1')
+        mininet.addLink('s2','h2')
+
+    def build_topo_4(cls, mininet):
+        #build topo_4 ((tree-topo) three switches, four hosts)
+        # add three switches to mininet topo
+        mininet.addSwitch('s1')
+        mininet.addSwitch('s2')
+        mininet.addSwitch('s3')
+        # add four hosts to topo
+        mininet.addHost('h1')
+        mininet.addHost('h2')
+        mininet.addHost('h3')
+        mininet.addHost('h4')
+        # connect everything
+        mininet.addLink('s1','s2')
+        mininet.addLink('s1','s3')
+        mininet.addLink('h1','s2')
+        mininet.addLink('h2','s2')
+        mininet.addLink('h3','s3')
+        mininet.addLink('h4','s3')
 
     @classmethod
     def validateNodes(cls, mininet, nodeList):

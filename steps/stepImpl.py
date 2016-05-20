@@ -58,13 +58,13 @@ def step_startWebserver(context, hst):
 def step_ping(context, hst1, hst2):
     # OpenStack part
     if(context.openStackTest == True):
-        #TODO:
         '''
         validate nodes
         send ping
         return packetLoss (pingResult)
         '''
         context.tf.validateNodes((hst1,hst2))
+        #TODO implement timeout
         timeout = "5"
         packetLoss = context.tf.ping(hst1, hst2, timeout)
     else:
@@ -189,7 +189,7 @@ def step_routeIdentification(context, hst1, hst2, sw):
 '''
 #####################################################################################################
 
-                                        OpenStack part
+                                    complete topologies
 
 #####################################################################################################
 '''
@@ -197,28 +197,48 @@ def step_routeIdentification(context, hst1, hst2, sw):
 
 @given('two hosts connected to one switch')
 def step_build_topo_1(context):
-    #deploy infrastructure and configure ports
-    workingDir = "terraformFiles/flat_1sw_2h"
-    context.tf = TerraformHelper(workingDir, context.behaveLogLevel)
-    context.tf.build_topo_1()
+    # OpenStack part
+    if(context.openStackTest == True):
+        #deploy infrastructure and configure ports
+        workingDir = "terraformFiles/flat_1sw_2h"
+        context.tf = TerraformHelper(workingDir, context.behaveLogLevel)
+        context.tf.build_topo_1()
+    else:
+        # Mininet part
+        MininetHelper.build_topo_1(context.mini)
 
 @given('four hosts connected to one switch')
 def step_build_topo_1(context):
-    workingDir = "terraformFiles/flat_1sw_4h"
-    context.tf = TerraformHelper(workingDir, context.behaveLogLevel)
-    context.tf.build_topo_2()
+    # OpenStack part
+    if(context.openStackTest == True):
+        workingDir = "terraformFiles/flat_1sw_4h"
+        context.tf = TerraformHelper(workingDir, context.behaveLogLevel)
+        context.tf.build_topo_2()
+    else:
+        # Mininet part
+        MininetHelper.build_topo_2(context.mini)
 
 @given('two hosts, each connected to a switch which are connected')
 def step_build_topo_1(context):
-    workingDir = "terraformFiles/flat_2sw_2h"
-    context.tf = TerraformHelper(workingDir, context.behaveLogLevel)
-    context.tf.build_topo_3()
+    # OpenStack part
+    if(context.openStackTest == True):
+        workingDir = "terraformFiles/flat_2sw_2h"
+        context.tf = TerraformHelper(workingDir, context.behaveLogLevel)
+        context.tf.build_topo_3()
+    else:
+        # Mininet part
+        MininetHelper.build_topo_3(context.mini)
 
 @given('a tree topo with depth one and fanout two')
 def step_build_topo_1(context):
-    workingDir = "terraformFiles/tree_3sw_4h"
-    context.tf = TerraformHelper(workingDir, context.behaveLogLevel)
-    context.tf.build_topo_4()
+    # OpenStack part
+    if(context.openStackTest == True):
+        workingDir = "terraformFiles/tree_3sw_4h"
+        context.tf = TerraformHelper(workingDir, context.behaveLogLevel)
+        context.tf.build_topo_4()
+    else:
+        # Mininet part
+        MininetHelper.build_topo_4(context.mini)
 
 
 
