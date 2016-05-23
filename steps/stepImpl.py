@@ -71,6 +71,9 @@ def step_ping(context, hst1, hst2):
         # Mininet part
         h1 = MininetHelper.getNodeFromName(context.mini, hst1)
         h2 = MininetHelper.getNodeFromName(context.mini, hst2)
+        # if controller = ONOS set host intents
+        if(context.onosFlag):
+            context.onosRest.setOnosIntent(h1.MAC(h1.name + "-eth0"), h2.MAC(h2.name + "-eth0"))
         timeout = "5"
         packetLoss = 100
         pingCounter = 0
@@ -205,7 +208,8 @@ def step_build_topo_1(context):
         context.tf.build_topo_1()
     else:
         # Mininet part
-        MininetHelper.build_topo_1(context.mini)
+        mnHelper = MininetHelper()
+        mnHelper.build_topo_1(context.mini)
 
 @given('four hosts connected to one switch')
 def step_build_topo_1(context):
@@ -216,7 +220,8 @@ def step_build_topo_1(context):
         context.tf.build_topo_2()
     else:
         # Mininet part
-        MininetHelper.build_topo_2(context.mini)
+        mnHelper = MininetHelper()
+        mnHelper.build_topo_2(context.mini)
 
 @given('two hosts, each connected to a switch which are connected')
 def step_build_topo_1(context):
@@ -227,7 +232,8 @@ def step_build_topo_1(context):
         context.tf.build_topo_3()
     else:
         # Mininet part
-        MininetHelper.build_topo_3(context.mini)
+        mnHelper = MininetHelper()
+        mnHelper.build_topo_3(context.mini)
 
 @given('a tree topo with depth one and fanout two')
 def step_build_topo_1(context):
@@ -238,7 +244,8 @@ def step_build_topo_1(context):
         context.tf.build_topo_4()
     else:
         # Mininet part
-        MininetHelper.build_topo_4(context.mini)
+        mnHelper = MininetHelper()
+        mnHelper.build_topo_4(context.mini)
 
 
 

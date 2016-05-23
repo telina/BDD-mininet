@@ -23,8 +23,8 @@ class MininetHelper(object):
         mininet.addHost('h1')
         mininet.addHost('h2')
         # connect everything
-        mininet.addLink('s1','h1')
-        mininet.addLink('s2','h1')
+        mininet.addLink('h1','s1')
+        mininet.addLink('h2','s1')
 
     def build_topo_2(cls, mininet):
         #build topo_3 (one switch, four hosts)
@@ -36,10 +36,10 @@ class MininetHelper(object):
         mininet.addHost('h3')
         mininet.addHost('h4')
         # connect everything
-        mininet.addLink('s1','h1')
-        mininet.addLink('s2','h1')
-        mininet.addLink('s3','h1')
-        mininet.addLink('s4','h1')
+        mininet.addLink('h1','s1')
+        mininet.addLink('h2','s1')
+        mininet.addLink('h3','s1')
+        mininet.addLink('h4','s1')
 
     def build_topo_3(cls, mininet):
         #build topo_3 (two switches, two hosts)
@@ -51,8 +51,8 @@ class MininetHelper(object):
         mininet.addHost('h2')
         # connect everything
         mininet.addLink('s1','s2')
-        mininet.addLink('s1','h1')
-        mininet.addLink('s2','h2')
+        mininet.addLink('h1','s1')
+        mininet.addLink('h2','s2')
 
     def build_topo_4(cls, mininet):
         #build topo_4 ((tree-topo) three switches, four hosts)

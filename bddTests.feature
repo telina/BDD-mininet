@@ -182,41 +182,25 @@
 #     Then the http traffic from host h1 to host h2 takes the route across switch s4
 
 
-  Feature: Run OpenStack tests
+  Feature: Run topology tests
 
-#    @openstack
-#    Scenario: one Switch and two hosts
-#        Given two hosts connected to one switch
-#         When host h1 pings host h2
-#         Then the ping succeeds
+    Scenario: one Switch and two hosts
+        Given two hosts connected to one switch
+         When host h1 pings host h2
+         Then the ping succeeds
 
-#    @openstack
-#    Scenario: one switch and four hosts
-#        Given four hosts connected to one switch
-#         When host h1 pings host h4
-#         Then the ping succeeds
+    Scenario: one switch and four hosts
+        Given four hosts connected to one switch
+         When host h1 pings host h4
+         Then the ping succeeds
 
-#    @openstack
-#    Scenario: two switches and two hosts
-#        Given two hosts, each connected to a switch which are connected
-#         When host h1 pings host h2
-#         Then the ping succeeds
+    Scenario: two switches and two hosts
+        Given two hosts, each connected to a switch which are connected
+         When host h1 pings host h2
+         Then the ping succeeds
 
-    @openstack
     Scenario: tree topo with three switches and four hosts
         Given a tree topo with depth one and fanout two
          When host h1 pings host h4
          Then the ping succeeds
 
-
-
-
-#    @Openstack
-#    Scenario: clientVM pings serverVM
-#      Given a virtual Machine clientVM
-#        And a virtual Machine serverVM
-#        And a virtual Machine switchVM
-#        And we connect clientVM with switchVM
-#        And we connect serverVM with switchVM
-#       When the clientVM pings the serverVM
-#       Then the ping succeeds

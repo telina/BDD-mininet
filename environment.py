@@ -21,8 +21,10 @@ def before_all(context):
     # BH_LOG=output is default
     try:
         context.behaveLogLevel = os.environ['BH_LOG']
-        if(not context.behaveLogLevel == 'warning'):
-                context.behaveLogLevel ='output'
+        if(context.behaveLogLevel == 'WARNING'):
+            context.behaveLogLevel = 'warning'
+        else:
+            context.behaveLogLevel = 'output'
     except KeyError:
         context.behaveLogLevel = "output"
     '''
@@ -32,9 +34,12 @@ def before_all(context):
     '''
     #check if test is openStack test
     try:
-        os.environ['BH_VAR_OPENSTACK'] == True or "true"
+        openStackTest = os.environ['BH_OPENSTACK'] # == "true"
         #openStack test
-        context.openStackTest = True
+        if(openStackTest == "true" or openStackTest == "True" ):
+            context.openStackTest = True
+        else:
+            context.openStackTest = False
     except KeyError:
         #default, mininet test
         context.openStackTest = False
@@ -52,8 +57,11 @@ def before_all(context):
     ######################################
         # check for controller type
         try:
-            os.environ['BH_CONTROLLER_TYPE'] == "ONOS" or "onos" or "Onos"
-            context.onosFlag = True
+            onosFlag = os.environ['BH_CONTROLLER_TYPE'] # == "ONOS" or "onos" or "Onos"
+            if(onosFlag == "ONOS" or onosFlag == "onos" ):
+                context.onosFlag = True
+            else:
+                context.onosFlag = False
         except KeyError:
             context.onosFlag = False
 
@@ -93,11 +101,14 @@ def before_scenario(context,scenario):
             #prevents flapping behavior of tests. It's not the best solution, but for now it works.
             payload = {"flowTimeout":"5"}
             context.onosRest.setOnosConfig(payload)
-            context.onosRest.setOnosIntent("00:00:00:00:00:01", "00:00:00:00:00:02")
+            #context.onosRest.setOnosIntent("00:00:00:00:00:01", "00:00:00:00:00:02")
         # controller is not onos
         else:
             controller = ControllerSetup.returnController(context.controllerIp, context.controllerPort)
 
+        context.mininetStarted = False
+        #create testTopo
+        context.testTopo = Topo()
         #create mininet instance with testTopo and controller
         context.mini = Mininet(topo=context.testTopo, controller=controller, cleanup=True,
                                ipBase='10.0.0.0/8', autoSetMacs=True, waitConnected=True)
@@ -209,7 +220,7 @@ def after_scenario(context,scenario):
     ######################################
      if(context.openStackTest):
         if(context.tf.readyToDestroy == True):
-            #context.tf.destroy()
+            context.tf.destroy()
             pass
         else:
             print("Please destroy infrastructure manually.")
