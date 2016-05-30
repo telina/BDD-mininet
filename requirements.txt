@@ -7,3 +7,5 @@ PyHamcrest==1.8.5
 requests==2.8.0
 six==1.9.0
 wheel==0.24.0
+python-openstackclient==2.4.0
+python-neutronclient==4.2.0

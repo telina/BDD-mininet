@@ -7,8 +7,9 @@ from mininet.net import *
 from mininet.topo import *
 from mininet.node import *
 from mininet.link import *
-from helper import NumberConverter, MininetHelper
+from helper import NumberConverter, MininetHelper, TerraformHelper
 from environment import *
+
 
 
 @given('a single switch')
@@ -55,18 +56,34 @@ def step_startWebserver(context, hst):
 
 @when('host {hst1} pings host {hst2}')
 def step_ping(context, hst1, hst2):
-    h1 = MininetHelper.getNodeFromName(context.mini, hst1)
-    h2 = MininetHelper.getNodeFromName(context.mini, hst2)
-    timeout = "5"
-    packetLoss = 100
-    pingCounter = 0
-    pingMaxCount = 5
-    while packetLoss > 0 and pingCounter < pingMaxCount:
-        if(pingCounter > 0):
-            #wait some time between two pings
-            sleep(1)
-        packetLoss = context.mini.ping((h1,h2), timeout)
-        pingCounter += 1
+    # OpenStack part
+    if(context.openStackTest == True):
+        '''
+        validate nodes
+        send ping
+        return packetLoss (pingResult)
+        '''
+        context.tf.validateNodes((hst1,hst2))
+        #TODO implement timeout
+        timeout = "5"
+        packetLoss = context.tf.ping(hst1, hst2, timeout)
+    else:
+        # Mininet part
+        h1 = MininetHelper.getNodeFromName(context.mini, hst1)
+        h2 = MininetHelper.getNodeFromName(context.mini, hst2)
+        # if controller = ONOS set host intents
+        if(context.onosFlag):
+            context.onosRest.setOnosIntent(h1.MAC(h1.name + "-eth0"), h2.MAC(h2.name + "-eth0"))
+        timeout = "5"
+        packetLoss = 100
+        pingCounter = 0
+        pingMaxCount = 5
+        while packetLoss > 0 and pingCounter < pingMaxCount:
+            if(pingCounter > 0):
+                #wait some time between two pings
+                sleep(1)
+            packetLoss = context.mini.ping((h1,h2), timeout)
+            pingCounter += 1
     context.pingResult = packetLoss
 
 @when('the link between {nd1} and {nd2} is going down')
@@ -172,6 +189,63 @@ def step_routeIdentification(context, hst1, hst2, sw):
 
 
 
+'''
+#####################################################################################################
+
+                                    complete topologies
+
+#####################################################################################################
+'''
+
+
+@given('two hosts connected to one switch')
+def step_build_topo_1(context):
+    # OpenStack part
+    if(context.openStackTest == True):
+        #deploy infrastructure and configure ports
+        workingDir = "terraformFiles/flat_1sw_2h"
+        context.tf = TerraformHelper(workingDir, context.behaveLogLevel)
+        context.tf.build_topo_1()
+    else:
+        # Mininet part
+        mnHelper = MininetHelper()
+        mnHelper.build_topo_1(context.mini)
+
+@given('four hosts connected to one switch')
+def step_build_topo_1(context):
+    # OpenStack part
+    if(context.openStackTest == True):
+        workingDir = "terraformFiles/flat_1sw_4h"
+        context.tf = TerraformHelper(workingDir, context.behaveLogLevel)
+        context.tf.build_topo_2()
+    else:
+        # Mininet part
+        mnHelper = MininetHelper()
+        mnHelper.build_topo_2(context.mini)
+
+@given('two hosts, each connected to a switch which are connected')
+def step_build_topo_1(context):
+    # OpenStack part
+    if(context.openStackTest == True):
+        workingDir = "terraformFiles/flat_2sw_2h"
+        context.tf = TerraformHelper(workingDir, context.behaveLogLevel)
+        context.tf.build_topo_3()
+    else:
+        # Mininet part
+        mnHelper = MininetHelper()
+        mnHelper.build_topo_3(context.mini)
+
+@given('a tree topo with depth one and fanout two')
+def step_build_topo_1(context):
+    # OpenStack part
+    if(context.openStackTest == True):
+        workingDir = "terraformFiles/tree_3sw_4h"
+        context.tf = TerraformHelper(workingDir, context.behaveLogLevel)
+        context.tf.build_topo_4()
+    else:
+        # Mininet part
+        mnHelper = MininetHelper()
+        mnHelper.build_topo_4(context.mini)
 
 
 
