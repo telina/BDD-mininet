@@ -1,31 +1,26 @@
 #Feature: set up and test a small topology
 #
-#  @OVS
 #  Scenario: Nr.1 connection of switches
 #    Given a single switch
 #      And a single switch
 #      And we connect switch s1 to switch s2
 #     Then switch s1 and switch s2 will share a link
 #
-#  @OVS
 #  Scenario: Nr.2 connection of switches
 #    Given a set of three switches
 #      And we connect switch s1 to switch s2
 #     Then switch s1 and switch s3 will not share a link
 #
-#  @OVS
 #  Scenario: Nr.3 connection of switches
 #    Given a set of 3 switches
 #      And we connect all switches with each other
 #     Then switch s1 and switch s3 will share a link
 #
-#  @OVS
 #  Scenario: Nr.4 connection of switches
 #    Given a set of four switches
 #      And we connect all switches with each other
 #     Then switch s1 and switch s4 will share a link
 #
-#  @OVS
 #  Scenario: Nr.5 connection of switches
 #    Given a set of 4 switches
 #      And we connect switch s1 to switch s2
@@ -34,14 +29,12 @@
 #     Then switch s1 and switch s2 will share a link
 #      And switch s3 and switch s4 will not share a link
 #
-#  @OVS
 #  Scenario: Nr.6 two connected switches, with link going down
 #    Given a set of two switches
 #      And we connect switch s1 to switch s2
 #     When the link between s1 and s2 is going down
 #     Then switch s1 and switch s2 will not share a link
 #
-#  @OVS
 #  Scenario: Nr.7 connection of 2 switches and 2 hosts
 #    Given a set of 2 switches
 #      And a set of two hosts
@@ -60,7 +53,6 @@
 #     When host h1 pings host h2
 #     Then the ping succeeds
 #
-#  @OVS
 #  Scenario: Nr.9 tree topo with depth 1, 4 switches and 2 hosts
 #    Given a set of 4 switches
 #      And a set of two hosts
@@ -72,7 +64,6 @@
 #     When host h1 pings host h2
 #     Then the ping succeeds
 #
-#  @OVS
 #  Scenario: Nr.10 tree topo with depth 2, 7 switches and 2 hosts
 #    Given a set of 7 switches
 #      And a set of two hosts
@@ -87,7 +78,6 @@
 #      When host h1 pings host h2
 #      Then the ping succeeds
 #
-#  @OVS
 #  Scenario: No.11 bus topo with 3 switches and 2 hosts
 #    Given a set of 4 switches
 #      And a set of two hosts
@@ -99,7 +89,6 @@
 #     When host h1 pings host h2
 #     Then the ping succeeds
 #
-#  @OVS
 #  Scenario: Nr.12 connection of switches
 #    Given a set of two switches
 #      And a set of 2 hosts
@@ -110,7 +99,6 @@
 #     When we send a http request from host h2 to host h1
 #     Then the request succeeds
 #
-#  @OVS
 #  Scenario: Nr.13 two connected switches, with link going down
 #    Given a set of two switches
 #      And a set of 2 hosts
@@ -121,7 +109,6 @@
 #      And host h1 pings host h2
 #     Then the ping fails
 #
-#
 #  Scenario: Nr.14 mesh net, with single link going down
 #    Given a set of 4 switches
 #      And a set of two hosts
@@ -131,7 +118,6 @@
 #     When the link between s1 and s4 is going down
 #      And host h1 pings host h2
 #     Then the ping succeeds
-#
 #
 #  Scenario: Nr.15 simple net with route identification
 #    Given a set of 5 switches
@@ -145,7 +131,6 @@
 #      And we connect host h2 to switch s5
 #     When host h1 pings host h2
 #     Then the ping traffic from host h1 to host h2 takes the route across switch s4
-#
 #
 #  Scenario: Nr.16 simple net with 3 routes between hosts
 #    Given a set of 10 switches
@@ -166,7 +151,6 @@
 #     When host h1 pings host h2
 #     Then the ping traffic from host h1 to host h2 takes the route across switch s8
 #
-#
 #  Scenario: Nr.17 simple net with route identification
 #    Given a set of 5 switches
 #      And a set of 2 hosts
@@ -184,23 +168,23 @@
 
   Feature: Run topology tests
 
-    Scenario: one Switch and two hosts
-        Given two hosts connected to one switch
-         When host h1 pings host h2
-         Then the ping succeeds
+#    Scenario: one Switch and two hosts
+#        Given two hosts connected to one switch
+#         When host h1 pings host h2
+#         Then the ping succeeds
 
-    Scenario: one switch and four hosts
-        Given four hosts connected to one switch
-         When host h1 pings host h4
-         Then the ping succeeds
+#    Scenario: one switch and four hosts
+#        Given four hosts connected to one switch
+#         When host h1 pings host h4
+#         Then the ping succeeds
 
     Scenario: two switches and two hosts
         Given two hosts, each connected to a switch which are connected
          When host h1 pings host h2
          Then the ping succeeds
 
-    Scenario: tree topo with three switches and four hosts
-        Given a tree topo with depth one and fanout two
-         When host h1 pings host h4
-         Then the ping succeeds
+#    Scenario: tree topo with three switches and four hosts
+#        Given a tree topo with depth one and fanout two
+#         When host h1 pings host h4
+#         Then the ping succeeds
 

@@ -43,13 +43,14 @@ Vagrant.configure(2) do |config|
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
-  # config.vm.provider "virtualbox" do |vb|
+   config.vm.provider "virtualbox" do |vb|
   #   # Display the VirtualBox GUI when booting the machine
   #   vb.gui = true
   #
   #   # Customize the amount of memory on the VM:
-  #   vb.memory = "1024"
-  # end
+     vb.cpus = 2
+     vb.memory = "2048"
+   end
   #
   # View the documentation for the provider you are using for more
   # information on available options.
@@ -71,15 +72,22 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision "shell", inline: <<-SHELL
     apt-get update
+    sudo sh -c 'echo "172.17.0.3 ls3cloud1.informatik.uni-wuerzburg.de dashboard" >> /etc/hosts'
     apt-get install -y git
+    apt-get install -y unzip
     git clone https://github.com/mininet/mininet $HOME/mininet
     cd $HOME/mininet
     git checkout -b 2.2.1 2.2.1
     $HOME/mininet/util/install.sh -nfv
+    apt-get install -y python-dev
     apt-get install -y python-pip
+    wget https://releases.hashicorp.com/terraform/0.6.14/terraform_0.6.14_linux_amd64.zip
+    unzip terraform_0.6.14_linux_amd64.zip -d /usr/local/bin
+    rm terraform_0.6.14_linux_amd64.zip
     pip install virtualenv
     git clone https://github.com/lsinfo3/BDD-mininet $HOME/BDD-mininet
     cd $HOME/BDD-mininet
+    sudo -s
     virtualenv $HOME/BDD-mininet/venv
     source $HOME/BDD-mininet/venv/bin/activate
     pip install -r requirements.txt
@@ -90,8 +98,12 @@ Vagrant.configure(2) do |config|
     echo "    sudo -s"
     echo "Then continue with"
     echo "    source $HOME/BDD-mininet/venv/bin/activate; cd $HOME/BDD-mininet"
+    echo "Afterwards you need to edit the config file and source it"
+    echo "    nano config"
+    echo "    source config"
     echo "To run the tests, execute"
     echo "    behave"
     echo "then."
   SHELL
 end
+
