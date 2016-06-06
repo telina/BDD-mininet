@@ -157,7 +157,7 @@ class TerraformHelper(object):
     workingDir changes for each openstack infrastructure
     valid node names helps to validate test input (only this node names must be used)
     '''
-    def __init__(cls, wd, logLevel):
+    def __init__(cls, wd="/", logLevel=output):
         cls.workingDir = wd
         cls.validNodeNames = ("one", "two", "three", "four", "h1", "h2", "h3", "h4")
         cls.suppressWarning = "2>/dev/null"
@@ -177,13 +177,18 @@ class TerraformHelper(object):
             assert node is not None
             assert_that(cls.validNodeNames, has_item(node), "%s in valid nodeNames" % node)
 
-    def ping(cls, host1, host2, timeout):
+    def ping(cls, host1, host2, pingOnce):
         #translate hostnames (h1, h2, etc)
         src = cls.translateHostName(host1)
         dst = cls.translateHostName(host2)
         #get Fip and Ip (Fip(floatingIp) for SSH connection)
         srcFip = cls.tf_get(src+"_fip")
         dstIp = cls.tf_get(dst+"_ip")
+        #configure ping
+        if(pingOnce == True):
+            pingCounter = "1"
+        else:
+            pingCounter = "10"
         #establish ssh connection and start ping
         try:
             s = pxssh.pxssh()
@@ -191,7 +196,7 @@ class TerraformHelper(object):
             username = "ubuntu"
             password = ""
             s.login(ip, username, password)
-            s.sendline("ping -c 10 " + dstIp + " -I eth1")
+            s.sendline("ping -c " + pingCounter + " " + dstIp + " -I eth1")
             s.prompt()
             print(s.before)
             s.sendline("echo $?")
@@ -203,13 +208,14 @@ class TerraformHelper(object):
         except pxssh.ExceptionPxssh,e:
             print("ssh connection failed on login.")
             print(str(e))
-        #get exitCode and return packetLoss
-        if(tmp.splitlines()[1] == "0"):
-            packetLoss = 0.0
-            return packetLoss
-        else:
-            packetLoss = -1
-            return packetLoss
+        #get exitCode and return packetLoss (not necessary for "pingOnce")
+        if(pingOnce == False):
+            if(tmp.splitlines()[1] == "0"):
+                packetLoss = 0.0
+                return packetLoss
+            else:
+                packetLoss = -1
+                return packetLoss
 
     # this allows using the same host identifiers for os and mininet tests
     def translateHostName(self, host):
@@ -221,6 +227,8 @@ class TerraformHelper(object):
             return "three"
         elif(host == "h4"):
             return "four"
+        else:
+            return host
 
     # queries terraform to return output information (e.g. a hosts ip/fip/mac, a switches fip/port etc)
     def tf_get(cls, arg):

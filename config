@@ -9,7 +9,7 @@
 #  -BH_CONTROLLER_TYPE tells behave which controller is beeing under test. REMOTE is default.
 #  -BH_CONTROLLER_IP_PORT holds ip and port for chosen controller
 export BH_LOG='OUTPUT'
-export BH_OPENSTACK=false
+export BH_OPENSTACK=true
 export BH_CONTROLLER_TYPE='ONOS'
 export BH_CONTROLLER_IP_PORT='192.168.0.102'
 

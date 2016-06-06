@@ -64,9 +64,14 @@ def step_ping(context, hst1, hst2):
         return packetLoss (pingResult)
         '''
         context.tf.validateNodes((hst1,hst2))
-        #TODO implement timeout
-        timeout = "5"
-        packetLoss = context.tf.ping(hst1, hst2, timeout)
+        # set host to host intents (get names of hst1/hst2, add "_mac" to get terraform output)
+        #ping once for ONOS host detection
+        pingOnce = True
+        context.tf.ping(hst1, hst2, pingOnce)
+        hst1_mac =  context.tf.tf_get(context.tf.translateHostName(hst1) + "_mac")
+        hst2_mac =  context.tf.tf_get(context.tf.translateHostName(hst2) + "_mac")
+        context.onosRest.setOnosIntent(hst1_mac, hst2_mac)
+        packetLoss = context.tf.ping(hst1, hst2, False)
     else:
         # Mininet part
         h1 = MininetHelper.getNodeFromName(context.mini, hst1)
@@ -206,6 +211,10 @@ def step_build_topo_1(context):
         workingDir = "terraformFiles/flat_1sw_2h"
         context.tf = TerraformHelper(workingDir, context.behaveLogLevel)
         context.tf.build_topo_1()
+        #provide controllers IP
+        context.controllerIp = context.tf.tf_get("controller_fip")
+        #provide ONOS-Rest access
+        context.onosRest = OnosRestAPI(context.controllerIp)
     else:
         # Mininet part
         mnHelper = MininetHelper()
@@ -218,6 +227,10 @@ def step_build_topo_1(context):
         workingDir = "terraformFiles/flat_1sw_4h"
         context.tf = TerraformHelper(workingDir, context.behaveLogLevel)
         context.tf.build_topo_2()
+        #provide controllers IP
+        context.controllerIp = context.tf.tf_get("controller_fip")
+        #provide ONOS-Rest access
+        context.onosRest = OnosRestAPI(context.controllerIp)
     else:
         # Mininet part
         mnHelper = MininetHelper()
@@ -230,6 +243,10 @@ def step_build_topo_1(context):
         workingDir = "terraformFiles/flat_2sw_2h"
         context.tf = TerraformHelper(workingDir, context.behaveLogLevel)
         context.tf.build_topo_3()
+        #provide controllers IP
+        context.controllerIp = context.tf.tf_get("controller_fip")
+        #provide ONOS-Rest access
+        context.onosRest = OnosRestAPI(context.controllerIp)
     else:
         # Mininet part
         mnHelper = MininetHelper()
@@ -242,6 +259,10 @@ def step_build_topo_1(context):
         workingDir = "terraformFiles/tree_3sw_4h"
         context.tf = TerraformHelper(workingDir, context.behaveLogLevel)
         context.tf.build_topo_4()
+        #provide controllers IP
+        context.controllerIp = context.tf.tf_get("controller_fip")
+        #provide ONOS-Rest access
+        context.onosRest = OnosRestAPI(context.controllerIp)
     else:
         # Mininet part
         mnHelper = MininetHelper()
