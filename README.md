@@ -51,7 +51,7 @@ In case you just want to execute all tests except your tagged ones, type `behave
 
 ### Additional
 The OpenStack tests work with an ONOS SDN-Controller running on a virtual machine within the OpenStack infrastructure. To access this controllers GUI you need to run the test and wait for Terraform output. The output provides you with the public IP of the controller ("controller_fip="). Use this IP to connect to the GUI (e.g.`http://"controller_fip":8181/onos/ui/index.html`).   
-To access the controllers console use the above described IP and connect into the vm using ssh. ONOS is running on a docker container within this vm. Type `sudo docker attach onos` to gain access to the ONOS console.
+To access the controllers console use the above described IP and connect into the vm using ssh. ONOS is running on a docker container within this vm. Type `sudo docker attach onos` to gain access to the ONOS console.  
 Every OpenStack infrastructure will be deleted at the end of the currently running test. This is required to run multiple tests of different OpenStack infrastructures. In case this isn't necessary, you may comment line 149 in "environment.py" file. This will prevent Behave from destroying. You may want to use this in order to test the reachability between "h1" and "h2", "h3" and "h4" without deploying the same infrastructure over and over again.
 
 ### Troubleshooting:
