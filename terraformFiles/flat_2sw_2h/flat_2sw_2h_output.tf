@@ -1,3 +1,11 @@
+#controller outputs
+output "controller_ip" {
+    value = "${openstack_compute_instance_v2.controller_Instance.network.0.fixed_ip_v4}"
+}
+output "controller_fip" {
+    value = "${openstack_compute_floatingip_v2.floatip_con.address}"
+}
+
 #switch outputs
 output "switch1_Id" {
     value = "${openstack_compute_instance_v2.default_Instance_sw1.id}"

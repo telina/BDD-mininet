@@ -1,3 +1,31 @@
+
+  Feature: Run topology tests
+
+#    Scenario: one Switch and two hosts
+#        Given two hosts connected to one switch
+#         When host h1 pings host h2
+#         Then the ping succeeds
+#
+#    Scenario: one switch and four hosts
+#        Given four hosts connected to one switch
+#         When host h1 pings host h4
+#         Then the ping succeeds
+#
+#    Scenario: two switches and two hosts
+#        Given two hosts, each connected to a switch which are connected
+#         When host h1 pings host h2
+#         Then the ping succeeds
+#
+    Scenario: tree topo with three switches and four hosts
+        Given a tree topo with depth one and fanout two
+         When host h2 pings host h3
+         Then the ping succeeds
+
+
+
+
+
+
 #Feature: set up and test a small topology
 #
 #  Scenario: Nr.1 connection of switches
@@ -164,27 +192,3 @@
 #      And we start a webserver on host h2
 #     When we send a http request from host h1 to host h2
 #     Then the http traffic from host h1 to host h2 takes the route across switch s4
-
-
-  Feature: Run topology tests
-
-#    Scenario: one Switch and two hosts
-#        Given two hosts connected to one switch
-#         When host h1 pings host h2
-#         Then the ping succeeds
-
-#    Scenario: one switch and four hosts
-#        Given four hosts connected to one switch
-#         When host h1 pings host h4
-#         Then the ping succeeds
-
-    Scenario: two switches and two hosts
-        Given two hosts, each connected to a switch which are connected
-         When host h1 pings host h2
-         Then the ping succeeds
-
-#    Scenario: tree topo with three switches and four hosts
-#        Given a tree topo with depth one and fanout two
-#         When host h1 pings host h4
-#         Then the ping succeeds
-

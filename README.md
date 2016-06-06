@@ -1,6 +1,6 @@
-## Behavior-Driven-Developement with Mininet 
+## Behavior-Driven-Developement for testing SDN_Controller
 
-#### This readme navigates you through installation and setup for using behave.
+##### This readme navigates you through installation and setup for using behave.
 
 
 ### Required Software:
@@ -10,93 +10,50 @@
 
 ### Installation:
 
-First of all, use Vagrant to start an Ubuntu/vivid64 VM.
+To install behave and the testing environment follow th instructions below.
 
-`agrant init ubuntu/vivid64`
+#### Installation via Vagrantfile
+
+In order to install behave via Vagrantfile you need to clone the repository first.  
+
+`git clone https://github.com/lsinfo3/BDD-mininet`  
+ 
+The cloned folder now contains the necessary Vagrantfile.
+To start the virtual machine type
 
 `vagrant up --provider virtualbox`
 
-`vagrant ssh`
+When the startup is complete follow the instructions on the screen to log into the VM and start Virtualenv.
+
+Now follow the configuration instructions below in order to setup the correct behave environment.
 
 
-If you being asked for credentials when starting the vm use vagrant/vagrant.
 
-Now you should be on the Ubuntu shell. Type:
-
-`sudo -s`
-
-this makes the next steps more convenient.
-
-`apt-get update`
-
-`apt-get -y install git`
-
-
-Next you need to get Mininet. This codes requires at least version 2.2.1 of Mininet.
-
-`git clone https://github.com/mininet/mininet /home/vagrant/mininet`
-
-`cd /home/vagrant/mininet`
-
-`git checkout -b 2.2.1 2.2.1`
-
-`cd /home/vagrant`
-
-`mininet/util/install.sh -nfv`
-
-This is the native installation you can find on the [Mininet website](http://mininet.org/download/ "Mininet installation"). 
-If you want to know more about the install.sh options, check the website.
-
-
-Next step is the installation of [pip](https://pypi.python.org/pypi/pip) and [virtualenv](https://virtualenv.pypa.io/en/latest/)
-
-`apt-get install -y python-pip`
-
-`pip install virtualenv`
-
-
-Now you need to get the code:
-
-`git clone https://github.com/lsinfo3/BDD-mininet /home/vagrant/BDD-mininet`
-
-`cd /home/vagrant/BDD-mininet`
-
-
-Setup and start a virtual environment named "venv":
-
-`virtualenv /home/vagrant/BDD-mininet/venv`
-
-`source /home/vagrant/BDD-mininet/venv/bin/activate`
-
-
-Last step is the installation of the required software with the requirements.txt file that comes with the code:
-
-`sudo pip install -r requirements.txt`
-
-
-### Environment Variables
-Now, before you run the code, you need to set a few environment variables as follows:
-* "ONOS_CONTROLLER" -> In case you are using the Onos Controller you need to set this variable. (e.g `export ONOS_CONTROLLER=192.168.0.1:6632`) The default port ist 6633.
-* "REMOTE_CONTROLLER"  -> To use a controller of your choice set the "RemoteController"-variable to an IP and PORT (e.g. `export REMOTE_CONTROLLER=192.168.0.1:6631`) The default Port is 6633.
-* "DEFAULT_CONTROLLER" -> If you want to test a small scenario which only needs simple forwarding behavior, you can set this variable to true. (e.g. `export DEFAULT_CONTROLLER=True`) This enables the OVSController.
-* In case you have a controller running on localhost with standard port=6633, just ignore all of the variables.
+### Configuration
+Now, before you can run the code, you need to set a few environment variables. Therefore you need to edit the config file and source it afterwards.  
+Following variables need to be set:
+* First: Set the Behave variables (prefix is BH_) 
+  * **BH_LOG** -  with this variable you can set the loglevel of your choice. Default is "OUTPUT" which prints you the normal output of the used subsystems (Mininet or Openstack/Terraform), with "WARNING" you can suppress normal output.
+  * **BH_OPENSTACK** - set this variable to "true" for testing an SDN-Controller (in this case ONOS) in an OpenStack environment. For testing with Mininet set it to "false".
+  * **BH_CONTROLLER_TYPE** - here you can define which SDN-Controller you want to test. Default is "REMOTE", for the ONOS SDN-Controller you need to set this variable to "ONOS". This variable only affects tests run with Mininet.
+  * **BH_CONTROLLER_IP_PORT** - here you define the IP and Port which your SDN-Controller is running on (e.g. 10.10.0.1:6633). You need to provide this information for Mininet tests only.  
+* Second: Setting the OpenStack (Terraform and Openstack/Neutron-client) variables. (`BH_OPENSTACK = true`)
+    * You will be prompted for username and password
+    * **TF_VAR_** - variables need to be set accordingly to your OpenStack System (auth_path, project, domain_name and user_domain_name)
+    * **OS_** - variables need to be set accordingly to your OpenStack System 
+    * **_ENDPOINT_TYPE** - variables need to be set accordingly to your OpenStack System
 
 ### Running Behave:
-Switch to the folder in which you placed your "*.feature" file and type "behave".
+Switch to the folder in which you placed your "*.feature" file and type "behave".  
+For choosing the test to execute please edit the "*.feature" file.
 In case you just want to execute tagged tests type `behave --tags=yourTag`
-In case you just want to execute alls test except your tagged ones, type `behave --tags=-yourTag`
-Tags:
-	@unstable -> flapping behavior with Onos in ractive mode
-	@OVS      -> works with OVS (DEFAULT_CONTROLLER=True) (no STP needed)
+In case you just want to execute all tests except your tagged ones, type `behave --tags=-yourTag`
 
-# Additional
-
-The reactive mode of the onos controller led to a flapping of the test scenarios. This behavior forced us to only use the proactive mode of this controller. This means, everytime before a scenario is about to be executed, an intent (host-to-host-intent) is installed to allow host h1 to communicate with host h2.
-
+### Additional
+The OpenStack tests work with an ONOS SDN-Controller running on a virtual machine within the OpenStack infrastructure. To access this controllers GUI you need to run the test and wait for Terraform output. The output provides you with the public IP of the controller ("controller_fip="). Use this IP to connect to the GUI (e.g.`http://"controller_fip":8181/onos/ui/index.html`).   
+To access the controllers console use the above described IP and connect into the vm using ssh. ONOS is running on a docker container within this vm. Type `sudo docker attach onos` to gain access to the ONOS console.
+Every OpenStack infrastructure will be deleted at the end of the currently running test. This is required to run multiple tests of different OpenStack infrastructures. In case this isn't necessary, you may comment line 149 in "environment.py" file. This will prevent Behave from destroying. You may want to use this in order to test the reachability between "h1" and "h2", "h3" and "h4" without deploying the same infrastructure over and over again.
 
 ### Troubleshooting:
-In case an error like "Exception: Error creating interface pair (s1-eth1,s2-eth1): RTNETLINK answers: File exists" occurs, type `mn -c` to clean up mininet. 
-
-
-
-
+It may happen that deploying the OpenStack infrastructure via Terraform causes errors the first time they are executed. If that happens please rerun the test once or even twice. In most cases the problem vanishes. If there are still problems with deploying the infrastructure please switch to the special Terraform subfolder with the topology causing the problems and try to run `terraform destroy`. After successfully destruction of the erroneous infrastructure switch back to the behave root folder and run the test again.  
+In case an error like `Exception: Error creating interface pair (s1-eth1,s2-eth1): RTNETLINK answers: File existsts` occurs, type `mn -c` to clean up mininet.
