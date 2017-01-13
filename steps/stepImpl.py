@@ -9,6 +9,7 @@ from mininet.node import *
 from mininet.link import *
 from helper import NumberConverter, MininetHelper, TerraformHelper
 from environment import *
+import itertools
 
 
 
@@ -51,6 +52,14 @@ def step_startWebserver(context, hst):
     cmdString = "python -m SimpleHTTPServer 80 &"
     serverNode.cmd(cmdString)
 
+@given('we enable IPv6 addressing')
+def step_addIPv6Address(context):
+    hosts = context.mini.hosts
+    cnt = 1
+    for host in hosts:
+        host.cmd('ifconfig h{0}-eth0 inet6 add fc00:0000:0000:0000::{0}/16 '.format(str(cnt))) 
+        cnt += 1
+
 #########################################################
 #               WHEN Part
 
@@ -90,6 +99,54 @@ def step_ping(context, hst1, hst2):
             packetLoss = context.mini.ping((h1,h2), timeout)
             pingCounter += 1
     context.pingResult = packetLoss
+
+# According to the error message, the same description is already used above
+# @when('host {hst1} pings host {hst2} {x} times')
+# def step_pingTimes(context, hst1, hst2, x):
+#     h1 = MininetHelper.getNodeFromName(context.mini, hst1)
+#     h2 = MininetHelper.getNodeFromName(context.mini, hst2)
+#     timeout = "5"
+#     packetloss = 0
+#     times = int(x)
+#     for _ in itertools.repeat(None, times):
+#         packetloss += context.mini.ping((h1, h2), timeout)
+#         sleep(0.50)
+#         context.pingResult = (packetloss / times)
+
+when('host {hst1} pings host {hst2} {x} times via IPv6')
+def step_pingTimesIPv6(context, hst1, hst2, x):
+    h1 = MininetHelper.getNodeFromName(context.mini, hst1)
+    h2 = MininetHelper.getNodeFromName(context.mini, hst2)
+    h2_address = h2.cmd("/sbin/ip -6 addr | grep inet6 | awk -F '[ \t]+|/' '{print $3}' | grep -E -v '^fe80*|^::1*'")
+    times = int(x)
+    packetloss = h1.cmd("ping6 -c {0} {1} | grep -oP '\d+(?=% packet loss)'".format(times, h2_address.rstrip()))
+    try:
+        context.pingResult = int(packetloss) / times
+    except(ValueError):
+        context.pingResult = 100 
+
+@when('we ping all hosts via IPv6')
+def step_pingAllHostsIPv6(context):
+    hosts = context.mini.hosts
+    if (hosts): # A trial with no hosts would result in dividing by zero
+        addresses = []
+        packetloss = 0            
+        for host in hosts:
+            # gets the ipv6 address. Excludes linklocal and host address
+            addresses.append(host.cmd("/sbin/ip -6 addr | grep inet6 | awk -F '[ \t]+|/' '{print $3}' | grep -E -v '^fe80*|^::1*'"))
+        for host in hosts:
+            for address in addresses:
+                result = host.cmd("ping6 -c 1 {0} | grep -oP '\d+(?=% packet loss)'".format(address.rstrip()))
+                try:
+                    packetloss += int(result)
+                except(ValueError): # result was string => 'ping failed'
+                    packetloss += 100
+                    break
+        context.pingResult = int(packetloss / len(hosts))
+    else:
+        context.pingResult = 100 # error case => no host was found
+
+
 
 @when('the link between {nd1} and {nd2} is going down')
 def step_linkDown(context, nd1, nd2):
@@ -153,6 +210,15 @@ def step_pingSucceed(context):
     else:
         ping = False
     assert_that(ping, equal_to(True), "Ping succeeds")
+
+@then('the packetloss is below {ptls} percent')
+def step_comparePacketloss(context, ptls):
+    result = False
+    ptls = int(ptls)
+    if 0 <= ptls <= 100:
+        if context.pingResult < ptls:
+            result = True
+    assert_that(result, equal_to(True), ("Packetloss was below %s" % str(ptls)))
 
 @then('the ping fails')
 def step_pingFailure(context):

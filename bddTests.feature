@@ -192,3 +192,18 @@
 #      And we start a webserver on host h2
 #     When we send a http request from host h1 to host h2
 #     Then the http traffic from host h1 to host h2 takes the route across switch s4
+
+
+# IPv6 Tests
+#
+#  Scenario: Directed IPv6 Ping
+#    Given four hosts connected to one switch
+#      And we enable IPv6 addressing
+#      When host h1 pings host h2 2 times via IPv6
+#    Then the ping succeeds
+#
+#  Scenario: IPv6 Pingall with less than 20% packetloss
+#    Given a tree topo with depth one and fanout two
+#      And we enable IPv6 addressing
+#      When we ping all hosts via IPv6
+#    Then the packetloss is below 20 percent
